@@ -72,6 +72,9 @@ ox::time now_ns(){
 };
 #elif OX_PLATFORM == OX_PLATFORM_LINUX
 //TODO: implement linux.
+ox::time now_ns(){
+    return ox::as_seconds(0);
+}
 #endif
 
 ox::time ox::now(){
