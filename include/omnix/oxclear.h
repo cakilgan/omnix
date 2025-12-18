@@ -1,0 +1,4 @@
+#ifndef _OX_CLEAR_MACROS_HEADER_
+#define _OX_CLEAR_MACROS_HEADER_
+
+#endif
