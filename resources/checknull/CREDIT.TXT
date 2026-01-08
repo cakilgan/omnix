@@ -26,4 +26,21 @@ You may not repackage, redistribute or resell the assets, no matter how much the
 
 $ORIGINAL README END//
 
-all credits of "chess.png" and "chess_board.png" aseets goes to 'DANI MACCARI'.
+
+
+// WARNING //
+
+
+## Assets
+This project uses third-party pixel art assets.
+
+Download the asset pack from:
+https://dani-maccari.itch.io/pixel-chess
+
+From the ZIP file, extract:
+- `16x16 pieces` PNG (path: `16x16 pieces`)
+- `142x142 board` PNG (path: `boards`, with 12px padding)
+
+Place the extracted files into: resources/checknull/
+
+Assets are not included in this repository due to license restrictions.
