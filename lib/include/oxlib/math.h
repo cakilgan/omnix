@@ -99,6 +99,9 @@ namespace ox {
         limit& operator*=(underlying rhs) { type = clamp(type * rhs); return *this; }
         limit& operator/=(underlying rhs) { type = clamp(type / rhs); return *this; }
 
+        limit& operator++(underlying rhs_IGNORE) { *this += 1; return *this;}
+        limit& operator--(underlying rhs_IGNORE) { *this -= 1; return *this;}
+
         friend limit operator+(limit lhs, underlying rhs) { lhs += rhs; return lhs; }
         friend limit operator-(limit lhs, underlying rhs) { lhs -= rhs; return lhs; }
         friend limit operator*(limit lhs, underlying rhs) { lhs *= rhs; return lhs; }
