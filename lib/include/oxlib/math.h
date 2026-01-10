@@ -351,12 +351,12 @@ vector3<T> A##B##C() const { return vector3<T>{A(), B(), C()}; }
         }
 
         V2SW(x, x) V2SW(x, y) V2SW(x, z)
-            V2SW(y, y) V2SW(y, x) V2SW(y, z)
-            V2SW(z, z) V2SW(z, x) V2SW(z, y)
+        V2SW(y, y) V2SW(y, x) V2SW(y, z)
+        V2SW(z, z) V2SW(z, x) V2SW(z, y)
 
-            V3SW(x, x, x) V3SW(x, x, y) V3SW(x, y, x) V3SW(x, y, y) V3SW(x, x, z) V3SW(x, z, x) V3SW(x, z, z) V3SW(x, y, z) V3SW(x, z, y)
-            V3SW(y, y, y) V3SW(y, y, x) V3SW(y, x, y) V3SW(y, x, x) V3SW(y, y, z) V3SW(y, z, y) V3SW(y, z, z) V3SW(y, x, z) V3SW(y, z, x)
-            V3SW(z, z, z) V3SW(z, z, y) V3SW(z, y, z) V3SW(z, y, y) V3SW(z, z, x) V3SW(z, x, z) V3SW(z, x, x) V3SW(z, y, x) V3SW(z, x, y)
+        V3SW(x, x, x) V3SW(x, x, y) V3SW(x, y, x) V3SW(x, y, y) V3SW(x, x, z) V3SW(x, z, x) V3SW(x, z, z) V3SW(x, y, z) V3SW(x, z, y)
+        V3SW(y, y, y) V3SW(y, y, x) V3SW(y, x, y) V3SW(y, x, x) V3SW(y, y, z) V3SW(y, z, y) V3SW(y, z, z) V3SW(y, x, z) V3SW(y, z, x)
+        V3SW(z, z, z) V3SW(z, z, y) V3SW(z, y, z) V3SW(z, y, y) V3SW(z, z, x) V3SW(z, x, z) V3SW(z, x, x) V3SW(z, y, x) V3SW(z, x, y)
     };
 
     template<typename T>
@@ -378,12 +378,12 @@ vector3<T> A##B##C() const { return vector3<T>{A(), B(), C()}; }
         T& w() { return this->data[3]; }
 
         V2SW(x, x) V2SW(x, y) V2SW(x, z)
-            V2SW(y, y) V2SW(y, x) V2SW(y, z)
-            V2SW(z, z) V2SW(z, x) V2SW(z, y)
+        V2SW(y, y) V2SW(y, x) V2SW(y, z)
+        V2SW(z, z) V2SW(z, x) V2SW(z, y)
 
-            V3SW(x, x, x) V3SW(x, x, y) V3SW(x, y, x) V3SW(x, y, y) V3SW(x, x, z) V3SW(x, z, x) V3SW(x, z, z) V3SW(x, y, z) V3SW(x, z, y)
-            V3SW(y, y, y) V3SW(y, y, x) V3SW(y, x, y) V3SW(y, x, x) V3SW(y, y, z) V3SW(y, z, y) V3SW(y, z, z) V3SW(y, x, z) V3SW(y, z, x)
-            V3SW(z, z, z) V3SW(z, z, y) V3SW(z, y, z) V3SW(z, y, y) V3SW(z, z, x) V3SW(z, x, z) V3SW(z, x, x) V3SW(z, y, x) V3SW(z, x, y)
+        V3SW(x, x, x) V3SW(x, x, y) V3SW(x, y, x) V3SW(x, y, y) V3SW(x, x, z) V3SW(x, z, x) V3SW(x, z, z) V3SW(x, y, z) V3SW(x, z, y)
+        V3SW(y, y, y) V3SW(y, y, x) V3SW(y, x, y) V3SW(y, x, x) V3SW(y, y, z) V3SW(y, z, y) V3SW(y, z, z) V3SW(y, x, z) V3SW(y, z, x)
+        V3SW(z, z, z) V3SW(z, z, y) V3SW(z, y, z) V3SW(z, y, y) V3SW(z, z, x) V3SW(z, x, z) V3SW(z, x, x) V3SW(z, y, x) V3SW(z, x, y)
     };
 
     typedef vector2<f32> vec2f;
@@ -393,7 +393,12 @@ vector3<T> A##B##C() const { return vector3<T>{A(), B(), C()}; }
     typedef vector2<i32> vec2i;
     typedef vector2<i64> vec2l;
 
-    typedef vec2i point;
+    typedef vector2<u8>  vec2ub;
+    typedef vector2<u16> vec2us;
+    typedef vector2<u32> vec2ui;
+    typedef vector2<u64> vec2ul;
+
+    typedef vec2i point2d;
 
     typedef vector3<f32> vec3f;
     typedef vector3<f64> vec3d;
@@ -402,6 +407,13 @@ vector3<T> A##B##C() const { return vector3<T>{A(), B(), C()}; }
     typedef vector3<i32> vec3i;
     typedef vector3<i64> vec3l;
 
+    typedef vector3<u8>  vec3ub;
+    typedef vector3<u16> vec3us;
+    typedef vector3<u32> vec3ui;
+    typedef vector3<u64> vec3ul;
+
+    typedef vec3i point3d;
+
     typedef vector4<f32> vec4f;
     typedef vector4<f64> vec4d;
     typedef vector4<i8>  vec4b;
@@ -409,6 +421,10 @@ vector3<T> A##B##C() const { return vector3<T>{A(), B(), C()}; }
     typedef vector4<i32> vec4i;
     typedef vector4<i64> vec4l;
 
+    typedef vector4<u8>  vec4ub;
+    typedef vector4<u16> vec4us;
+    typedef vector4<u32> vec4ui;
+    typedef vector4<u64> vec4ul;
 
 #undef V2SW
 #undef V3SW
