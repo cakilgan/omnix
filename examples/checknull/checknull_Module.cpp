@@ -1,6 +1,6 @@
 #include "checknull_Module.h"
 #include "GLFW/glfw3.h"
-#include "zeus.h"
+#include "oxlib/color.h"
 
 namespace {
     scene *Scene;
@@ -23,6 +23,12 @@ ox::result game_main::init(){
     window = dynamic_cast<window_module*>(Modules->get_modules()[32]);
     OX_ASSERT(input);
     OX_ASSERT(window);
+
+    glfwSetWindowAttrib(
+        (GLFWwindow*)window->Handle(),
+        GLFW_RESIZABLE,
+        GLFW_FALSE
+    );
 
     window->PushWindowSizeChangeEvent("_CheckNull", [](int w,int h){
         glViewport(0,0,w,h);

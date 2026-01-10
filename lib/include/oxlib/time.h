@@ -31,7 +31,8 @@ OX_NAMESPACEDEF {
         time_v _Value;
         time_t _Type;
     public:
-        time(time_v Value, time_t Type) :_Value(Value), _Type(Type) {}
+        constexpr time(time_v Value, time_t Type) :_Value(Value), _Type(Type) {}
+
         time_v value() const { return _Value; }
         time_t unit() const { return _Type; }
         time_v& value_ref() { return _Value; };

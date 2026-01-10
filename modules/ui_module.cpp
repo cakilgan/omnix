@@ -58,7 +58,7 @@ ox::result ui_module::update(double dt){
     zs::main::UnbindCurrentProgram();
 
     
-    //Engine->FontRenderer.draw(Engine->Font,ox::mat4::build::ortho(0.0f, WindowW, 0.0f, WindowH, -1.0f, 1.0f));
+    Engine->FontRenderer.draw(Engine->Font,ox::mat4::build::ortho(0.0f, WindowW, 0.0f, WindowH, -1.0f, 1.0f));
     zs::dbg2d::end(ox::mat4::identity(),ox::mat4::build::ortho(0.0f, WindowW, 0.0f, WindowH, -1.0f, 1.0f));
     return ox::ok;
 }

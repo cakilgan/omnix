@@ -575,6 +575,7 @@ namespace ui{
     struct engine{
         renderer* Renderer;
         zs::font::textbatch FontRenderer;
+
         zs::font::font Font;
 
         data data;
@@ -595,7 +596,7 @@ namespace ui{
 
         void init_renderer(){
             Renderer->batch.init();
-            Font.load("ARIAL.TTF", 25.0f);
+            Font.load("../../ARIAL.TTF", 25.0f);
         }
 
         void init(){

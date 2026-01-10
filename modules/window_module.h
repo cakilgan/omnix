@@ -8,6 +8,8 @@
 #include <oxlib/time.h>
 #include "../omnix/common.h"
 
+
+
 struct WindowApi {
 	ox::lvptr Handle;
 };

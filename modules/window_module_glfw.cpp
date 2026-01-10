@@ -12,17 +12,13 @@ ox::result window_module::init() {
 	OX_ASSERT(Logger);
 	OX_ASSERT(Controller);
 
-
-	glfwInit();
+	OX_ASSERTMSG(glfwInit(),"%s","cannot initialize glfw.");
 
 	glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 4);
 	glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 6);
 	glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
-	glfwWindowHint(GLFW_RESIZABLE, GLFW_FALSE);
 
-	OX_ASSERTMSG(glfwInit(),"%s","cannot initialize glfw.");
-	WindowPtr = glfwCreateWindow(800, 600, "Omnix Window", nullptr, nullptr);
-	OX_ASSERTMSG(WindowPtr, "%s", "cannot create glfw window.");
+	OX_ASSERTMSG(WindowPtr = glfwCreateWindow(800, 600, "Omnix Window", nullptr, nullptr), "%s", "cannot create glfw window.");
 
 	glfwMakeContextCurrent(WindowPtr);
 	return ox::ok;

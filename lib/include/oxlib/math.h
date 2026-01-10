@@ -801,9 +801,7 @@ vector3<T> A##B##C() const { return vector3<T>{A(), B(), C()}; }
     typedef matrix<float, 1, 1> mat1;
 
     template<typename T, size_t N>
-    struct matvec :matrix<T, N, 1> {
-
-    };
+    using matvec = matrix<T,N,1>;
 
     typedef matvec<float, 2> matvec2;
     typedef matvec<float, 3> matvec3;

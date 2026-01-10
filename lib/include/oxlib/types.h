@@ -32,6 +32,11 @@ OX_NAMESPACEDEF {
   OX_TYPEDEF(opaque *, vptr);
   OX_TYPEDEF(void *, lvptr);
 
+  template<typename T = void>
+  inline vptr asvptr(T* _Ptr){
+    return dynamic_cast<vptr>(_Ptr);
+  }
+
   template <typename T = void> inline constexpr T *null() noexcept {
     return static_cast<T *>(nullptr);
   }
