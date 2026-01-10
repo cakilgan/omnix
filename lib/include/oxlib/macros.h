@@ -4,6 +4,10 @@
 
 #define OX_NAME "OmniX"
 
+
+#define OX_TRUE (1)
+#define OX_FALSE (0)
+
 #define OX_UNDEFINED -2
 #define OX_ERROR -1
 #define OX_IS_UNDEFINED(X) (X == OX_UNDEFINED)

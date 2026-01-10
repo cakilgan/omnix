@@ -151,7 +151,16 @@ OX_NAMESPACEDEF {
 
 #if OX_IS_UNDEFINED(OX_INLINE_VARS_SUPPORTED)
 #undef OX_INLINE_VARS_SUPPORTED
-#define OX_INLINE_VARS_SUPPORTED _INLINE_VARIABLES_SUPPORTED
+#if defined(__cpp_inline_variables)
+#if __cpp_inline_variables != 0
+#define OX_INLINE_VARS_SUPPORTED OX_TRUE
+#else
+#define OX_INLINE_VARS_SUPPORTED OX_FALSE
+#endif
+#else
+#define OX_INLINE_VARS_SUPPORTED OX_UNDEFINED
+#endif
+
 #endif
 
 #ifndef OX_PLATFORM

@@ -2,7 +2,10 @@
 #ifndef INCLUDE_GUARD_OXLIB_LIB_HEADER_
 #define INCLUDE_GUARD_OXLIB_LIB_HEADER_
 
-#include <oxlib/oxlib.h>
+#include <oxlib/macros.h>
+#include <oxlib/detects.h>
+#include <oxlib/types.h>
+#include <oxlib/result.h>
 #include <vector>
 
 #ifndef OXLIBCONFIG_SET
