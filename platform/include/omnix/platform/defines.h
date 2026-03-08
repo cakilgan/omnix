@@ -27,6 +27,12 @@
 #endif
 #define OX_INLINE inline
 
+#if OX_IS(COMPILER,CLANG) || OX_IS(COMPILER,GCC)
+#   define OX_RESTRICT __restrict
+#else
+#   define OX_RESTRICT
+#endif
+
 
 #define OX_STATIC_ASSERT(x,y) static_assert(x,y)
 
