@@ -73,40 +73,47 @@ namespace ox {
 		};
 
 		OX_STATIC_ASSERT(sizeof(::ox::byte) == 1, "size of omnix#byte must be exactly 1 byte.");
-
-
-		OX_USING(bytes_t,i64);
+		OX_USING(bytes_t, i64);
 
 		struct bytes {
-			bytes_t ct;
-			OX_FORCE_CONSTEXPR bytes():bytes(0){};
-			OX_FORCE_CONSTEXPR bytes(const bytes_t b):ct(b) {}
-			OX_FORCE_CONSTEXPR bool operator==( const bytes& rhs ) const { return ct == rhs.ct; }
-			OX_FORCE_CONSTEXPR bool operator!=( const bytes& rhs ) const { return ct != rhs.ct; }
-			OX_FORCE_CONSTEXPR bool operator< ( const bytes& rhs ) const { return ct <  rhs.ct; }
-			OX_FORCE_CONSTEXPR bool operator<=( const bytes& rhs ) const { return ct <= rhs.ct; }
-			OX_FORCE_CONSTEXPR bool operator> ( const bytes& rhs ) const { return ct >  rhs.ct; }
-			OX_FORCE_CONSTEXPR bool operator>=( const bytes& rhs ) const { return ct >= rhs.ct; }
+		    bytes_t ct;
 
+		    OX_FORCE_CONSTEXPR bytes() : ct(0) {}
+		    OX_FORCE_CONSTEXPR bytes(bytes_t b) : ct(b) {}
+
+		    OX_FORCE_CONSTEXPR operator bytes_t() const { return ct; }
+		    OX_FORCE_CONSTEXPR operator bytes_t&()       { return ct; }
+
+		    OX_FORCE_CONSTEXPR bool operator==(const bytes& rhs) const { return ct == rhs.ct; }
+		    OX_FORCE_CONSTEXPR bool operator!=(const bytes& rhs) const { return ct != rhs.ct; }
+		    OX_FORCE_CONSTEXPR bool operator< (const bytes& rhs) const { return ct <  rhs.ct; }
+		    OX_FORCE_CONSTEXPR bool operator<=(const bytes& rhs) const { return ct <= rhs.ct; }
+		    OX_FORCE_CONSTEXPR bool operator> (const bytes& rhs) const { return ct >  rhs.ct; }
+		    OX_FORCE_CONSTEXPR bool operator>=(const bytes& rhs) const { return ct >= rhs.ct; }
+
+		    OX_FORCE_CONSTEXPR bytes& operator+=(const bytes& rhs) { ct += rhs.ct; return *this; }
+		    OX_FORCE_CONSTEXPR bytes& operator-=(const bytes& rhs) { ct -= rhs.ct; return *this; }
+		    OX_FORCE_CONSTEXPR bytes& operator*=(bytes_t scalar)   { ct *= scalar;  return *this; }
+		    OX_FORCE_CONSTEXPR bytes& operator/=(bytes_t scalar)   { ct /= scalar;  return *this; }
 		};
 
-		OX_FORCE_CONSTEXPR OX_INLINE bytes    gigabytes    (bytes_t gb)           			   { return {gb * 1024*1024*1024LL}; }
-		OX_FORCE_CONSTEXPR OX_INLINE bytes_t  gigabytes    (const bytes& gb)      			   { return      gb.ct / 1024*1024*1024LL;}
-		OX_FORCE_CONSTEXPR OX_INLINE bytes    megabytes    (const bytes_t mb)     			   { return {mb * 1024*1024LL};      }
-		OX_FORCE_CONSTEXPR OX_INLINE bytes_t  megabytes    (const bytes& mb)      			   { return      mb.ct / 1024*1024LL;     }
-		OX_FORCE_CONSTEXPR OX_INLINE bytes    kilobytes    (const bytes_t kb)     			   { return {kb * 1024LL};			  }
-		OX_FORCE_CONSTEXPR OX_INLINE bytes_t  kilobytes    (const bytes& kb)      			   { return      kb.ct / 1024LL;	      }
+		OX_FORCE_CONSTEXPR OX_INLINE bytes   gigabytes(const bytes_t gb)    { return gb * 1024*1024*1024LL; }
+		OX_FORCE_CONSTEXPR OX_INLINE bytes_t gigabytes(const bytes& gb)		{ return gb.ct / (1024LL*1024*1024); }
+		OX_FORCE_CONSTEXPR OX_INLINE bytes   megabytes(const bytes_t mb)    { return mb * 1024LL*1024; }
+		OX_FORCE_CONSTEXPR OX_INLINE bytes_t megabytes(const bytes& mb)		{ return mb.ct / (1024LL*1024); }
+		OX_FORCE_CONSTEXPR OX_INLINE bytes   kilobytes(const bytes_t kb)    { return kb * 1024LL; }
+		OX_FORCE_CONSTEXPR OX_INLINE bytes_t kilobytes(const bytes& kb)		{ return kb.ct / 1024LL; }
 
-		OX_FORCE_CONSTEXPR OX_INLINE bytes    operator-    (const bytes& a,const bytes& b)     { return {a.ct - b.ct};           }
-		OX_FORCE_CONSTEXPR OX_INLINE bytes    operator+    (const bytes& a,const bytes& b)     { return {a.ct + b.ct};           }
-		OX_FORCE_CONSTEXPR OX_INLINE bytes    operator/    (const bytes& a,const bytes& b)     { return {a.ct / b.ct};           }
-		OX_FORCE_CONSTEXPR OX_INLINE bytes    operator*    (const bytes& a,const bytes& b)     { return {a.ct * b.ct};           }
-		OX_FORCE_CONSTEXPR OX_INLINE bytes    operator%    (const bytes& a,const bytes& b)     { return {a.ct % b.ct};           }
-		OX_FORCE_CONSTEXPR OX_INLINE bytes    operator&    (const bytes& a,const bytes& b)     { return {a.ct & b.ct};           }
+		OX_FORCE_CONSTEXPR OX_INLINE bytes operator-(const bytes& a, const bytes& b) { return a.ct - b.ct; }
+		OX_FORCE_CONSTEXPR OX_INLINE bytes operator+(const bytes& a, const bytes& b) { return a.ct + b.ct; }
+		OX_FORCE_CONSTEXPR OX_INLINE bytes operator/(const bytes& a, const bytes& b) { return a.ct / b.ct; }
+		OX_FORCE_CONSTEXPR OX_INLINE bytes operator*(const bytes& a, const bytes& b) { return a.ct * b.ct; }
+		OX_FORCE_CONSTEXPR OX_INLINE bytes operator%(const bytes& a, const bytes& b) { return a.ct % b.ct; }
+		OX_FORCE_CONSTEXPR OX_INLINE bytes operator&(const bytes& a, const bytes& b) { return a.ct & b.ct; }
 
-		OX_FORCE_CONSTEXPR OX_INLINE bytes    operator*    (const bytes& a,const i64 scalar)   { return  {a.ct * scalar};        }
-		OX_FORCE_CONSTEXPR OX_INLINE bytes    operator/    (const bytes& a,const i64 scalar)   { return  {a.ct / scalar};        }
-		OX_FORCE_CONSTEXPR OX_INLINE bytes    operator*    (const i64 scalar,const bytes& a)   { return  {a.ct * scalar};        }
-		OX_FORCE_CONSTEXPR OX_INLINE bytes    operator/    (const i64 scalar,const bytes& a)   { return  {scalar / a.ct};        }
+		OX_FORCE_CONSTEXPR OX_INLINE bytes operator*(const bytes& a, const i64 scalar) { return a.ct * scalar; }
+		OX_FORCE_CONSTEXPR OX_INLINE bytes operator/(const bytes& a, const i64 scalar) { return a.ct / scalar; }
+		OX_FORCE_CONSTEXPR OX_INLINE bytes operator*(const i64 scalar, const bytes& a) { return a.ct * scalar; }
+		OX_FORCE_CONSTEXPR OX_INLINE bytes operator/(const i64 scalar, const bytes& a) { return scalar / a.ct; }
 }
 #endif //OMNIX_BYTE_H
