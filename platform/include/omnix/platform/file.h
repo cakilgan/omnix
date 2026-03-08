@@ -7,7 +7,7 @@
 
 #include "types.h"
 #include "result.h"
-#include <new>
+
 namespace ox {
 
     struct file {
@@ -93,30 +93,13 @@ namespace ox {
             bool  is_link;
         };
         static result<file_info> stat(cstr path) noexcept;
-
-        static bool exists(cstr path) noexcept{
-            return static_cast<bool>(stat(path));
-        }
-        static result<usize> bytes(cstr path) noexcept{
-            const auto fs = stat(path);
-            OX_RESULTV(fs,return fs.value().size;);
-        }
-        static result<bool> is_dir(cstr path) noexcept{
-            const auto fs = stat(path);
-            OX_RESULTV(fs,return false;);
-        }
-        static result<bool> is_file(cstr path) noexcept{
-            const auto fs = stat(path);
-            OX_RESULTV(fs,return fs.value().is_file;);
-        }
-        static result<bool> is_link(cstr path) noexcept{
-            const auto fs = stat(path);
-            OX_RESULTV(fs,return fs.value().is_link;);
-        }
-
-        static result_t remove(cstr path)                noexcept;
-        static result_t rename(cstr from, cstr to)       noexcept;
-
+        static bool exists(cstr path) noexcept;
+        static result<usize> bytes(cstr path) noexcept;
+        static result<bool> is_dir(cstr path) noexcept;
+        static result<bool> is_file(cstr path) noexcept;
+        static result<bool> is_link(cstr path) noexcept;
+        static result_t remove(cstr path)          noexcept;
+        static result_t rename(cstr from, cstr to) noexcept;
 
         result<mapped> map(usize offset = 0, usize len = 0) const noexcept;
 
@@ -165,28 +148,7 @@ namespace ox {
         buf_heap_writer(const buf_heap_writer&)                = delete;
         buf_heap_writer& operator=(const buf_heap_writer&)     = delete;
 
-        result<usize> write(cvptr buf, usize len) noexcept {
-            const char* src     = static_cast<const char*>(buf);
-            usize       written = 0;
-
-            while (len > 0) {
-                usize avail = _buf_size - _pos;
-                usize chunk = len < avail ? len : avail;
-
-                __builtin_memcpy(_buf + _pos, src, chunk);
-                _pos    += chunk;
-                src     += chunk;
-                len     -= chunk;
-                written += chunk;
-
-                if (_pos == _buf_size) {
-                    auto r = flush();
-                    if (r != ok) return result<usize>{ r };
-                }
-            }
-            return result<usize>{ written };
-        }
-
+        result<usize> write(cvptr buf, usize len) noexcept;
         result<usize> write(cstr s) noexcept {
             if (!s) return result<usize>{ file::invalid };
             usize len = 0;
