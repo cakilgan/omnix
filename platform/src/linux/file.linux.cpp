@@ -244,4 +244,48 @@ namespace ox {
             default:     return file::io_error;
         }
     }
+
+    bool file::exists(cstr path) noexcept{
+        return static_cast<bool>(stat(path));
+    }
+    result<usize> file::bytes(cstr path) noexcept{
+        const auto fs = stat(path);
+        OX_RESULTV(fs,return fs.value().size;);
+    }
+    result<bool> file::is_dir(cstr path) noexcept{
+        const auto fs = stat(path);
+        OX_RESULTV(fs,return false;);
+    }
+    result<bool> file::is_file(cstr path) noexcept{
+        const auto fs = stat(path);
+        OX_RESULTV(fs,return fs.value().is_file;);
+    }
+    result<bool> file::is_link(cstr path) noexcept{
+        const auto fs = stat(path);
+        OX_RESULTV(fs,return fs.value().is_link;);
+    }
+
+
+    //NOTE: for not having to include <new>
+    result<usize> buf_heap_writer::write(cvptr buf, usize len) noexcept {
+        const char* src     = static_cast<const char*>(buf);
+        usize       written = 0;
+
+        while (len > 0) {
+            usize avail = _buf_size - _pos;
+            usize chunk = len < avail ? len : avail;
+
+            __builtin_memcpy(_buf + _pos, src, chunk);
+            _pos    += chunk;
+            src     += chunk;
+            len     -= chunk;
+            written += chunk;
+
+            if (_pos == _buf_size) {
+                auto r = flush();
+                if (r != ok) return result<usize>{ r };
+            }
+        }
+        return result{ written };
+    }
 } // namespace ox
