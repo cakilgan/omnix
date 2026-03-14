@@ -10,7 +10,7 @@ namespace ox {
     OX_USING(result_t,i64);
 
     template<typename T>
-struct result {
+    struct result {
     public:
 
         result(const T& v)
@@ -41,7 +41,7 @@ struct result {
         }
 
         result(result&& other)
- noexcept             : _has_value(other._has_value)
+        noexcept : _has_value(other._has_value)
         {
             if (_has_value)
                 new(&_storage.value) T(static_cast<T&&>(other._storage.value));
@@ -90,14 +90,13 @@ struct result {
 
     using results::ok;
     using results::err;
-
-
 }
 
-#define OX_RESULTV(x,...) \
+#define OX_RESULT(x,y)\
     if(x){\
-    __VA_ARGS__\
+    y\
     }\
-    return x.err();\
+
+#define OX_RRESULT(x) OX_RESULT(!x,return x.err();)
 
 #endif //OMNIX_RESULT_H
