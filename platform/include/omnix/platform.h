@@ -13,6 +13,8 @@ namespace ox {
 #include "platform/detect.h"
 #include "platform/defines.h"
 #include "platform/types.h"
+#include "platform/assert.h"
+#include "platform/util.h"
 #include "platform/time.h"
 #include "platform/result.h"
 #include "platform/byte.h"
