@@ -33,16 +33,21 @@ namespace ox {
     OX_USING( i8, signed char  );
     OX_USING( i16,signed short );
     OX_USING( i32,signed int   );
-    OX_USING( i64,signed long int );
 
     OX_USING( u8, unsigned char      );
     OX_USING( u16,unsigned short     );
     OX_USING( u32,unsigned int       );
+
 #if __WORDSIZE == 64
     OX_USING( u64,unsigned long int  );
+    OX_USING( i64,signed long int    );
 #else
     OX_USING( u64,unsigned long long );
+    OX_USING( i64,signed long int    );
 #endif
+
+    OX_USING(uptr,u64);
+    OX_USING(iptr,i64);
 #endif
 
     OX_USING( f32, float       );
@@ -50,12 +55,15 @@ namespace ox {
     OX_USING( f128,long double );
 
     OX_USING( usize,     u64         );
+    OX_USING( loc,       i64         );
     OX_USING( basic_byte,u8          );
     OX_USING( cstr,      const char* );
     OX_USING( cchar,     const char  );
     OX_USING( dstr,      char*       );
     OX_USING( vptr,      void*       );
     OX_USING( cvptr,     const void* );
+    OX_USING( vptrc,     void*const  );
+
 
     OX_USING(opq,
         struct opaque {
