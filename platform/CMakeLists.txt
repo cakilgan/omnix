@@ -1,6 +1,7 @@
 add_library(oxlayer_platform
         src/platform.cpp
         src/types.cpp
+        src/assert.cpp
 )
 
 if(UNIX)
