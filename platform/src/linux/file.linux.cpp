@@ -250,19 +250,23 @@ namespace ox {
     }
     result<usize> file::bytes(cstr path) noexcept{
         const auto fs = stat(path);
-        OX_RESULTV(fs,return fs.value().size;);
+        OX_RRESULT(fs);
+        return fs.value().size;
     }
     result<bool> file::is_dir(cstr path) noexcept{
         const auto fs = stat(path);
-        OX_RESULTV(fs,return false;);
+        OX_RRESULT(fs);
+        return fs.value().is_dir;
     }
     result<bool> file::is_file(cstr path) noexcept{
         const auto fs = stat(path);
-        OX_RESULTV(fs,return fs.value().is_file;);
+        OX_RRESULT(fs);
+        return fs.value().is_file;
     }
     result<bool> file::is_link(cstr path) noexcept{
         const auto fs = stat(path);
-        OX_RESULTV(fs,return fs.value().is_link;);
+        OX_RRESULT(fs);
+        return fs.value().is_link;
     }
 
 
