@@ -33,6 +33,8 @@
 #   define OX_RESTRICT
 #endif
 
+#define OX_SDEBUG struct __debug{
+#define OX_SDEBUG_END }debug
 
 #define OX_STATIC_ASSERT(x,y) static_assert(x,y)
 
