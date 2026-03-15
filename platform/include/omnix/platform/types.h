@@ -27,8 +27,8 @@ namespace ox {
     OX_USING( u32,::std::uint32_t );
     OX_USING( u64,::std::uint64_t );
 
-    OX_USING( uptr,uintptr_t      );
-    OX_USING( iptr,intptr_t       );
+    OX_USING( uptr,::std::uintptr_t      );
+    OX_USING( iptr,::std::intptr_t       );
 #else
     OX_USING( i8, signed char  );
     OX_USING( i16,signed short );
