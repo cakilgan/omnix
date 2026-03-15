@@ -5,10 +5,6 @@
 #ifndef OMNIX_OMNIX_PLATFORM_H
 #define OMNIX_OMNIX_PLATFORM_H
 
-namespace ox {
-
-}
-
 #include "platform/macros.h"
 #include "platform/detect.h"
 #include "platform/defines.h"
