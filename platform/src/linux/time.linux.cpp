@@ -7,10 +7,10 @@
 #include <ctime>
 
 namespace ox {
-    static time_t _query_posix_ns(clockid_t clk_id) {
+    static ::ox::time_t _query_posix_ns(clockid_t clk_id) {
         struct timespec ts{};
         clock_gettime(clk_id, &ts);
-        return (time_t)ts.tv_sec * 1000000000LL + (time_t)ts.tv_nsec;
+        return (::ox::time_t)ts.tv_sec * 1000000000LL + (time_t)ts.tv_nsec;
     }
 
     using namespace ox::clocks;
@@ -34,7 +34,7 @@ namespace ox {
     time thread_relative::now() {
         struct timespec ts{};
         if (clock_gettime(CLOCK_THREAD_CPUTIME_ID, &ts) == 0) {
-            return { (time_t)ts.tv_sec * 1000000000LL + (time_t)ts.tv_nsec };
+            return { (::ox::time_t)ts.tv_sec * 1000000000LL + (::ox::time_t)ts.tv_nsec };
         }
         return { 0 };
     }
@@ -42,7 +42,7 @@ namespace ox {
     i32 sleep(const time& dur) {
         if (dur<=ox::nanoseconds(0)) return -1;
         struct timespec ts{};
-        ts.tv_sec = static_cast<time_t>(dur.ns / 1000000000LL);
+        ts.tv_sec = static_cast<::ox::time_t>(dur.ns / 1000000000LL);
         ts.tv_nsec = static_cast<long>(dur.ns % 1000000000LL);
 
         if (nanosleep(&ts, nullptr) == -1) {
