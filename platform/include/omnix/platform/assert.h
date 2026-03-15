@@ -38,5 +38,6 @@ namespace ox {
 
 #define OX_UNREACHABLE() \
 do { OX_ASSERT_MSG(false, "Unreachable code executed"); __builtin_unreachable(); } while(0)
+#define OX_FAIL(msg) OX_ASSERT_MSG(false, msg)
 
 #endif // OMNIX_ASSERT_H

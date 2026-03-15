@@ -34,4 +34,4 @@ void default_assert_handler(cstr expr,
     std::abort();
 }
 
-assert_handler ox::g_assert_handler = default_assert_handler;
+assert_handler ox::g_assert_handler = default_assert_handler;//
