@@ -111,6 +111,20 @@ namespace ox {
 		OX_FORCE_CONSTEXPR OX_INLINE bytes operator%(const bytes& a, const bytes& b) { return a.ct % b.ct; }
 		OX_FORCE_CONSTEXPR OX_INLINE bytes operator&(const bytes& a, const bytes& b) { return a.ct & b.ct; }
 
+		OX_FORCE_CONSTEXPR OX_INLINE bytes operator-(const loc&  a, const bytes& b) { return a - b.ct; }
+		OX_FORCE_CONSTEXPR OX_INLINE bytes operator+(const loc&  a, const bytes& b) { return a + b.ct; }
+		OX_FORCE_CONSTEXPR OX_INLINE bytes operator/(const loc&  a, const bytes& b) { return a / b.ct; }
+		OX_FORCE_CONSTEXPR OX_INLINE bytes operator*(const loc&  a, const bytes& b) { return a * b.ct; }
+		OX_FORCE_CONSTEXPR OX_INLINE bytes operator%(const loc&  a, const bytes& b) { return a % b.ct; }
+		OX_FORCE_CONSTEXPR OX_INLINE bytes operator&(const loc&  a, const bytes& b) { return a & b.ct; }
+
+		OX_FORCE_CONSTEXPR OX_INLINE bytes operator-(const bytes& a, const loc& b) { return a.ct - b; }
+		OX_FORCE_CONSTEXPR OX_INLINE bytes operator+(const bytes& a, const loc& b) { return a.ct + b; }
+		OX_FORCE_CONSTEXPR OX_INLINE bytes operator/(const bytes& a, const loc& b) { return a.ct / b; }
+		OX_FORCE_CONSTEXPR OX_INLINE bytes operator*(const bytes& a, const loc& b) { return a.ct * b; }
+		OX_FORCE_CONSTEXPR OX_INLINE bytes operator%(const bytes& a, const loc& b) { return a.ct % b; }
+		OX_FORCE_CONSTEXPR OX_INLINE bytes operator&(const bytes& a, const loc& b) { return a.ct & b; }
+
 		OX_FORCE_CONSTEXPR OX_INLINE bytes operator*(const bytes& a, const i64 scalar) { return a.ct * scalar; }
 		OX_FORCE_CONSTEXPR OX_INLINE bytes operator/(const bytes& a, const i64 scalar) { return a.ct / scalar; }
 		OX_FORCE_CONSTEXPR OX_INLINE bytes operator*(const i64 scalar, const bytes& a) { return a.ct * scalar; }
