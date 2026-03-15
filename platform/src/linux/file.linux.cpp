@@ -8,6 +8,7 @@
 #include <sys/stat.h>
 #include <cerrno>
 #include <cstdio>
+#include <memory>
 #include <sys/mman.h>
 #include <omnix/platform/byte.h>
 #include <new>
@@ -215,10 +216,10 @@ namespace ox {
             const int dst = ::open(to, O_WRONLY | O_CREAT | O_TRUNC, 0644);
             if (dst < 0) { ::close(src); return file::io_error; }
 
-            char buf[65536];
+            const auto buf = std::make_unique<char[]>(65536);
             ssize_t n;
-            while ((n = ::read(src, buf, sizeof(buf))) > 0) {
-                if (::write(dst, buf, static_cast<usize>(n)) < 0) {
+            while ((n = ::read(src, buf.get(), sizeof(buf))) > 0) {
+                if (::write(dst, buf.get(), static_cast<usize>(n)) < 0) {
                     ::close(src);
                     ::close(dst);
                     ::unlink(to);
