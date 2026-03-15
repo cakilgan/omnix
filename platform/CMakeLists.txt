@@ -1,7 +1,6 @@
 add_library(oxlayer_platform
         src/platform.cpp
         src/types.cpp
-        src/assert.cpp
 )
 
 if(UNIX)
@@ -9,12 +8,10 @@ if(UNIX)
             src/linux/file.linux.cpp
             src/linux/time.linux.cpp
             src/linux/memory.linux.cpp
+            src/linux/assert.linux.cpp
     )
 elseif(WIN32)
-    target_sources(oxlayer_platform PRIVATE
-            src/windows/file.windows.cpp
-            src/windows/time.windows.cpp
-    )
+    #implement
 endif()
 
 target_sources(oxlayer_platform PRIVATE
