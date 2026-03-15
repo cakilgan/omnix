@@ -50,12 +50,19 @@
 #endif
 
 // ==================== Build Mode Detection ====================
-#if !defined(OX_DEBUG) && !(OX_PRODUCT)
+#if !defined(OX_DEBUG) && !defined(OX_PRODUCT)
     #define OX_BUILD OX_BUILD_RELEASE
 #elif OX_PRODUCT
     #define OX_BUILD OX_BUILD_PRODUCTION
 #else
     #define OX_BUILD OX_BUILD_DEBUG
+#endif
+
+// ==================== Endiannes Detection ====================
+#if defined(__BYTE_ORDER__) && __BYTE_ORDER__ == __ORDER_BIG_ENDIAN__
+  #define OX_ENDIAN OX_ENDIAN_BIG
+#else
+  #define OX_ENDIAN OX_ENDIAN_LITTLE
 #endif
 
 #endif //OMNIX_DETECT_H
