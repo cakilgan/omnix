@@ -28,13 +28,20 @@ namespace ox {
         return check != nullptr;
     }
 
+
+    // DANGEROUS
+    // basically just ignores result code and assumes value() is valid and moves it.
+    // NOTE: makes assertion for debug mode.
     template<typename T>
     T unchecked(result<T> _result) {
         OX_ASSERT(_result);
         return ox::move(_result.value());
     }
 
-    // for ignoring nodiscard
+    // DANGEROUS
+    // like unchecked(result<T>) but it takes just error codes
+    // this is for operations that return result_t rather than result<T>
+    // NOTE: makes assertion for debug mode.
     OX_INLINE void unchecked(const result_t _result) {
         OX_ASSERT(_result==ok);
     }
