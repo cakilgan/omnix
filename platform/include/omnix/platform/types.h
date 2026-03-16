@@ -7,8 +7,6 @@
 
 #define OX_TYPES_USE_STDINT
 
-#include <typeindex>
-
 #ifdef OX_TYPES_USE_STDINT
 #include <cstdint>
 #endif
@@ -55,6 +53,7 @@ namespace ox {
     OX_USING( f128,long double );
 
     OX_USING( usize,     u64         );
+    OX_USING( isize,     i64         );
     OX_USING( loc,       i64         );
     OX_USING( basic_byte,u8          );
     OX_USING( cstr,      const char* );
@@ -64,18 +63,32 @@ namespace ox {
     OX_USING( cvptr,     const void* );
     OX_USING( vptrc,     void*const  );
 
+    using type_id = u64;
+    namespace __detail {
+        inline u64 next_type_id() {
+            static u64 counter = 0;
+            return ++counter;
+        }
+    };
+
+    template<typename T>
+    type_id type_of() {
+        static type_id id = __detail::next_type_id();
+        return id;
+    }
+
 
     OX_USING(opq,
         struct opaque {
             void* _raw = nullptr;
-            std::type_index _type{typeid(void)};
+            type_id _type{type_of<void>()};
             void (*_deleter)(void*) = nullptr;
             opaque() = default;
             template<typename T>
             static opaque make(T* ptr) {
                 return opaque{
                     ptr,
-                    typeid(T),
+                    type_of<T>(),
                     [](vptr p) { delete static_cast<T*>(p); }
                };
             }
@@ -90,7 +103,7 @@ namespace ox {
                 }
                 _raw = nullptr;
                 _deleter = nullptr;
-                _type = typeid(void);
+                _type = type_of<void>();
             }
 
             opaque(opaque&& other) noexcept
@@ -100,7 +113,7 @@ namespace ox {
             {
                 other._raw = nullptr;
                 other._deleter = nullptr;
-                other._type = typeid(void);
+                other._type = type_of<void>();
             }
 
             opaque& operator=(opaque&& other) noexcept {
@@ -112,7 +125,7 @@ namespace ox {
 
                     other._raw = nullptr;
                     other._deleter = nullptr;
-                    other._type = typeid(void);
+                    other._type = type_of<void>();
                 }
                 return *this;
             }
@@ -122,7 +135,7 @@ namespace ox {
 
             template<typename T>
             T* as() const noexcept {
-                if (_type != typeid(T))
+                if (_type != type_of<T>())
                     return nullptr;
                 return static_cast<T*>(_raw);
             }
@@ -135,13 +148,13 @@ namespace ox {
                 vptr tmp = _raw;
                 _raw = nullptr;
                 _deleter = nullptr;
-                _type = typeid(void);
+                _type = type_of<void>();
                 return tmp;
             }
 
             friend void swap(opaque& a, opaque& b) noexcept;
         private:
-            opaque(void* p, const std::type_info& ti, void(*d)(void*))
+            opaque(void* p, const type_id& ti, void(*d)(void*))
                 : _raw(p), _type(ti), _deleter(d) {}
         };
     );
