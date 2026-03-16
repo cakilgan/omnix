@@ -18,6 +18,7 @@ set(CMAKE_CXX_STANDARD 17)
 file(GLOB_RECURSE OX_SOURCES "src/*.cpp")
 
 add_subdirectory(platform)
+add_subdirectory(core)
 
 add_library(omnix_engine ${OX_SOURCES})
 target_include_directories(omnix_engine PRIVATE "include")
