@@ -43,18 +43,23 @@ namespace ox {
 
     namespace clocks{
         struct monotonic {
+            monotonic() = delete;
             static time now();
         };
         struct steady {
+            steady() = delete;
             static time now();
         };
         struct wall {
+            wall() = delete;
             static time now();
         };
         struct process_relative {
+            process_relative() = delete;
             static time now();
         };
         struct thread_relative {
+            thread_relative() = delete;
             static time now();
         };
     }
