@@ -14,154 +14,202 @@
 #include "defines.h"
 
 namespace ox {
+    namespace types {
 #ifdef OX_TYPES_USE_STDINT
-    OX_USING( i8, ::std::int8_t  );
-    OX_USING( i16,::std::int16_t );
-    OX_USING( i32,::std::int32_t );
-    OX_USING( i64,::std::int64_t );
+        OX_USING( i8, ::std::int8_t  );
+        OX_USING( i16,::std::int16_t );
+        OX_USING( i32,::std::int32_t );
+        OX_USING( i64,::std::int64_t );
 
-    OX_USING( u8, ::std::uint8_t  );
-    OX_USING( u16,::std::uint16_t );
-    OX_USING( u32,::std::uint32_t );
-    OX_USING( u64,::std::uint64_t );
+        OX_USING( u8, ::std::uint8_t  );
+        OX_USING( u16,::std::uint16_t );
+        OX_USING( u32,::std::uint32_t );
+        OX_USING( u64,::std::uint64_t );
 
-    OX_USING( uptr,::std::uintptr_t      );
-    OX_USING( iptr,::std::intptr_t       );
+        OX_USING( uptr,::std::uintptr_t      );
+        OX_USING( iptr,::std::intptr_t       );
 #else
-    OX_USING( i8, signed char  );
-    OX_USING( i16,signed short );
-    OX_USING( i32,signed int   );
+        OX_USING( i8, signed char  );
+        OX_USING( i16,signed short );
+        OX_USING( i32,signed int   );
 
-    OX_USING( u8, unsigned char      );
-    OX_USING( u16,unsigned short     );
-    OX_USING( u32,unsigned int       );
+        OX_USING( u8, unsigned char      );
+        OX_USING( u16,unsigned short     );
+        OX_USING( u32,unsigned int       );
 
 #if __WORDSIZE == 64
-    OX_USING( u64,unsigned long int  );
-    OX_USING( i64,signed long int    );
+        OX_USING( u64,unsigned long int  );
+        OX_USING( i64,signed long int    );
 #else
-    OX_USING( u64,unsigned long long );
-    OX_USING( i64,signed long int    );
+        OX_USING( u64,unsigned long long );
+        OX_USING( i64,signed long int    );
 #endif
 
-    OX_USING(uptr,u64);
-    OX_USING(iptr,i64);
+        OX_USING(uptr,u64);
+        OX_USING(iptr,i64);
 #endif
 
-    OX_USING( f32, float       );
-    OX_USING( f64, double      );
-    OX_USING( f128,long double );
+        OX_USING( f32, float       );
+        OX_USING( f64, double      );
+        OX_USING( f128,long double );
 
-    OX_USING( usize,     u64         );
-    OX_USING( isize,     i64         );
-    OX_USING( loc,       i64         );
-    OX_USING( basic_byte,u8          );
-    OX_USING( cstr,      const char* );
-    OX_USING( cchar,     const char  );
-    OX_USING( dstr,      char*       );
-    OX_USING( vptr,      void*       );
-    OX_USING( cvptr,     const void* );
-    OX_USING( vptrc,     void*const  );
+        OX_USING( usize,     u64         );
+        OX_USING( isize,     i64         );
 
-    using type_id = u64;
-    namespace __detail {
-        inline u64 next_type_id() {
-            static u64 counter = 0;
-            return ++counter;
+        struct loc;
+        struct sloc;
+
+        OX_USING( basic_byte,u8          );
+        OX_USING( cstr,      const char* );
+        OX_USING( cchar,     const char  );
+        OX_USING( dstr,      char*       );
+        OX_USING( arrstr,    char**      );
+        OX_USING( vptr,      void*       );
+        OX_USING( cvptr,     const void* );
+        OX_USING( vptrc,     void*const  );
+
+        using type_id = u64;
+        namespace __detail {
+            inline u64 next_type_id() {
+                static u64 counter = 0;
+                return ++counter;
+            }
+        };
+
+        template<typename T>
+        type_id type_of() {
+            static type_id id = __detail::next_type_id();
+            return id;
         }
-    };
-
-    template<typename T>
-    type_id type_of() {
-        static type_id id = __detail::next_type_id();
-        return id;
-    }
+        template<typename T>
+        type_id type_of(const T& _) {
+            return type_of<T>();
+        }
 
 
-    OX_USING(opq,
-        struct opaque {
-            void* _raw = nullptr;
-            type_id _type{type_of<void>()};
-            void (*_deleter)(void*) = nullptr;
-            opaque() = default;
-            template<typename T>
-            static opaque make(T* ptr) {
-                return opaque{
-                    ptr,
-                    type_of<T>(),
-                    [](vptr p) { delete static_cast<T*>(p); }
-               };
-            }
-
-            ~opaque() {
-                reset();
-            }
-
-            void reset() noexcept {
-                if (_raw && _deleter) {
-                    _deleter(_raw);
+        OX_USING(opq,
+            struct opaque {
+                void* _raw = nullptr;
+                type_id _type{type_of<void>()};
+                void (*_deleter)(void*) = nullptr;
+                opaque() = default;
+                template<typename T>
+                static opaque make(T* ptr) {
+                    return opaque{
+                        ptr,
+                        type_of<T>(),
+                        [](vptr p) { delete static_cast<T*>(p); }
+                   };
                 }
-                _raw = nullptr;
-                _deleter = nullptr;
-                _type = type_of<void>();
-            }
 
-            opaque(opaque&& other) noexcept
-                : _raw(other._raw),
-                _type(other._type),
-                _deleter(other._deleter)
-            {
-                other._raw = nullptr;
-                other._deleter = nullptr;
-                other._type = type_of<void>();
-            }
-
-            opaque& operator=(opaque&& other) noexcept {
-                if (this != &other) {
+                ~opaque() {
                     reset();
-                    _raw = other._raw;
-                    _type = other._type;
-                    _deleter = other._deleter;
+                }
 
+                void reset() noexcept {
+                    if (_raw && _deleter) {
+                        _deleter(_raw);
+                    }
+                    _raw = nullptr;
+                    _deleter = nullptr;
+                    _type = type_of<void>();
+                }
+
+                opaque(opaque&& other) noexcept
+                    : _raw(other._raw),
+                    _type(other._type),
+                    _deleter(other._deleter)
+                {
                     other._raw = nullptr;
                     other._deleter = nullptr;
                     other._type = type_of<void>();
                 }
-                return *this;
-            }
 
-            opaque(const opaque&) = delete;
-            opaque& operator=(const opaque&) = delete;
+                opaque& operator=(opaque&& other) noexcept {
+                    if (this != &other) {
+                        reset();
+                        _raw = other._raw;
+                        _type = other._type;
+                        _deleter = other._deleter;
 
-            template<typename T>
-            T* as() const noexcept {
-                if (_type != type_of<T>())
-                    return nullptr;
-                return static_cast<T*>(_raw);
-            }
+                        other._raw = nullptr;
+                        other._deleter = nullptr;
+                        other._type = type_of<void>();
+                    }
+                    return *this;
+                }
 
-            explicit operator bool() const noexcept {
-                return _raw != nullptr;
-            }
+                opaque(const opaque&) = delete;
+                opaque& operator=(const opaque&) = delete;
 
-            vptr release() noexcept {
-                vptr tmp = _raw;
-                _raw = nullptr;
-                _deleter = nullptr;
-                _type = type_of<void>();
-                return tmp;
-            }
+                template<typename T>
+                T* as() const noexcept {
+                    if (_type != type_of<T>())
+                        return nullptr;
+                    return static_cast<T*>(_raw);
+                }
 
-            friend void swap(opaque& a, opaque& b) noexcept;
-        private:
+                explicit operator bool() const noexcept {
+                    return _raw != nullptr;
+                }
+
+                vptr release() noexcept {
+                    vptr tmp = _raw;
+                    _raw = nullptr;
+                    _deleter = nullptr;
+                    _type = type_of<void>();
+                    return tmp;
+                }
+
+                friend void swap(opaque& a, opaque& b) noexcept;
+            private:
             opaque(void* p, const type_id& ti, void(*d)(void*))
                 : _raw(p), _type(ti), _deleter(d) {}
         };
     );
 
 
-    template<typename T = void>
-    constexpr T* null = nullptr;
+        template<typename T = void>
+        constexpr T* null = nullptr;
+    }
+
+    using types::i8;
+    using types::i16;
+    using types::i32;
+    using types::i64;
+
+    using types::u8;
+    using types::u16;
+    using types::u32;
+    using types::u64;
+
+    using types::uptr;
+    using types::iptr;
+
+    using types::f32;
+    using types::f64;
+    using types::f128;
+
+    using types::isize;
+    using types::usize;
+
+    using types::loc;
+    using types::sloc;
+
+    using types::basic_byte;
+    using types::cstr;
+    using types::dstr;
+    using types::arrstr;
+
+    using types::cchar;
+    using types::vptr;
+    using types::cvptr;
+    using types::vptrc;
+
+    using types::opq;
+    using types::opaque;
+
+    using types::null;
 }
 
 OX_STATIC_ASSERT( sizeof(::ox::i8)  == 1,  "size of omnix#i8  must be exactly 1 byte."  );
