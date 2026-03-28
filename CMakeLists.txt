@@ -22,7 +22,8 @@ add_subdirectory(core)
 
 add_library(omnix_engine ${OX_SOURCES})
 target_include_directories(omnix_engine PRIVATE "include")
-target_link_libraries(omnix_engine PUBLIC oxlayer_platform)
+target_link_libraries(omnix_engine PUBLIC oxlayer_platform oxlayer_core)
+
 
 add_executable(omnix main.cpp)
 target_include_directories(omnix PRIVATE "include")
