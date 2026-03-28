@@ -16,11 +16,11 @@
 namespace ox {
 
     // Align a size value to the given alignment.
-    OX_FORCE_CONSTEXPR usize align(const usize size, const usize alignment) {
-        if (alignment == 0) return size;
+    OX_FORCE_CONSTEXPR bytes align(const bytes size, const bytes alignment) {
+        if (alignment == bytes(0)) return size;
 
-        const usize remainder = size % alignment;
-        if (remainder == 0)
+        const auto remainder = size % alignment;
+        if (remainder == bytes(0))
             return size;
 
         return size + (alignment - remainder);
@@ -56,23 +56,28 @@ namespace ox {
     }
 
     // Returns ptr + offset with safe casting.
-    OX_INLINE vptr offset_ptr(cvptr ptr, const usize offset) {
-        return reinterpret_cast<vptr>(reinterpret_cast<uptr>(ptr) + offset);
+    OX_INLINE vptr offset_ptr(vptr ptr, const bytes offset) {
+        return static_cast<byte*>(ptr) + offset;
+    }
+    OX_INLINE cvptr offset_ptr(cvptr ptr, const bytes offset) {
+        return static_cast<const byte*>(ptr) + offset;
     }
 
+    // always define memory categories in base ox:: namespace.
+    OX_RESULT_CATEGORY(memory,-1320);
 
     struct memory {
-
         // Error codes
-        // range: -1321 ... -1328
-        static OX_CAUTO slice_overlap              = result_t{-1321};
-        static OX_CAUTO max_slice_overflow         = result_t{-1322};
-        static OX_CAUTO no_match_for_unslice       = result_t{-1323};
-        static OX_CAUTO already_released           = result_t{-1324};
-        static OX_CAUTO non_owner_release          = result_t{-1325};
-        static OX_CAUTO allocation_error           = result_t{-1326};
-        static OX_CAUTO cannot_find_suitable_memory= result_t{-1327};
-        static OX_CAUTO null_parameter             = result_t{-1328};
+        // range: -1321 ... -1327
+        struct err {
+            OX_RESULT(memory,slice_overlap);
+            OX_RESULT(memory,max_slice_overflow);
+            OX_RESULT(memory,no_match_for_unslice);
+            OX_RESULT(memory,already_released);
+            OX_RESULT(memory,non_owner_release);
+            OX_RESULT(memory,allocation_error);
+            OX_RESULT(memory,cannot_find_suitable_memory);
+        };
 
 
         // Maximum number of slices a memory object can track.
@@ -80,8 +85,8 @@ namespace ox {
 
         // Stores information about a single slice.
         struct slice_record {
-            loc   start;
-            bytes size;
+            loc   start {};
+            bytes size  {};
         };
 
         // Slice record stack
@@ -98,7 +103,7 @@ namespace ox {
          * This value is used internally for bounds checking
          * and general slice calculations inside memory functions.
          */
-        loc _slice_start = 0;
+        loc _slice_start = loczero;
 
 
         // Memory types:
@@ -125,7 +130,7 @@ namespace ox {
             _Type = o._Type;
 
             o._Data = nullptr;
-            o._Size = 0;
+            o._Size = bytes(0);
             o._Type = invalid;
         }
 
@@ -133,7 +138,24 @@ namespace ox {
         // Disable copy operations
         memory(const memory&) = delete;
         memory& operator=(const memory&) = delete;
-        memory& operator=(memory) = delete;
+
+        memory& operator=(memory&& o) noexcept {
+            if (this == &o) return *this;
+
+            if (is_owner())
+                OX_VERIFY(release(*this) == ok);
+
+            _Data = o._Data;
+            _Size = o._Size;
+            _Type = o._Type;
+
+            o._Data = nullptr;
+            o._Size = bytes(0);
+            o._Type = invalid;
+
+            return *this;
+        }
+
 
 
         // Allocate memory of given size
@@ -144,7 +166,7 @@ namespace ox {
 
         // Create a slice from the memory
         // range: [start, start + size)
-        static result<memory> slice(memory& o, loc start, bytes size, loc ignore_start = -1);
+        static result<memory> slice(memory& o, loc start, bytes size, loc ignore_start = locinvalid);
 
         // Remove a slice from its parent
         static result_t unslice(memory& parent, memory& child, bool set_zero = false);
@@ -158,7 +180,7 @@ namespace ox {
          * Typical usage:
          *     slice(big_memory, find(big_memory, 1024), 1024);
          */
-        static loc find(memory& mem, bytes size, loc ignore_start = -1);
+        static loc find(memory& mem, bytes size, loc ignore_start = locinvalid);
 
 
         ~memory() {

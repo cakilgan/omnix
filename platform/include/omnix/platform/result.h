@@ -4,6 +4,7 @@
 
 #ifndef OMNIX_RESULT_H
 #define OMNIX_RESULT_H
+
 #include "defines.h"
 #include "types.h"
 namespace ox {
@@ -83,20 +84,37 @@ namespace ox {
         bool _has_value;
     };
 
+#define OX_RESULT_CATEGORY(name, base_val) \
+static constexpr ox::result_t _ox_##name##_base = (base_val); \
+static constexpr int _ox_##name##_counter_start = __COUNTER__ + 1;
+
+#define OX_RESULT(category, name) \
+static constexpr ox::result_t name = \
+_ox_##category##_base + (__COUNTER__ - _ox_##category##_counter_start);
+
+    // always define memory categories in base ox:: namespace.
+    OX_RESULT_CATEGORY(results,-6000);
+
     namespace results {
         OX_CAUTO ok  = result_t{0};
-        OX_CAUTO err = result_t{-1};
+        OX_CAUTO error = result_t{-1};
+        namespace err {
+            OX_RESULT(results,null_pointer);
+            OX_RESULT(results,invalid_parameter);
+            OX_RESULT(results,invalid_handle);
+        }
     };
 
     using results::ok;
-    using results::err;
+    using results::error;
 }
 
-#define OX_RESULT(x,y)\
-    if(x){\
+#define OX_IFRESULT(x,y)\
+    if(x)\
+    {\
     y\
     }\
 
-#define OX_RRESULT(x) OX_RESULT(!x,return x.err();)
+#define OX_RRESULT(x) OX_IFRESULT(!x,return x.err();)
 
 #endif //OMNIX_RESULT_H

@@ -7,18 +7,22 @@
 
 #include "types.h"
 #include "result.h"
+#include "byte.h"
 
 namespace ox {
 
+    // always define memory categories in base ox:: namespace.
+    OX_RESULT_CATEGORY(file,-100001);
+
     struct file {
     public:
-
-        static OX_CAUTO not_found  = result_t{-100};
-        static OX_CAUTO permission = result_t{-101};
-        static OX_CAUTO io_error   = result_t{-102};
-        static OX_CAUTO invalid    = result_t{-103};
-        static OX_CAUTO eof        = result_t{-104};
-        static OX_CAUTO too_large  = result_t{-105};
+        struct err {
+            OX_RESULT(file,not_found);
+            OX_RESULT(file,permission_denied);
+            OX_RESULT(file,io_error);
+            OX_RESULT(file,eof);
+            OX_RESULT(file,too_large);
+        };
 
         struct handle{
             opaque raw;
@@ -94,7 +98,7 @@ namespace ox {
         };
         static result<file_info> stat(cstr path) noexcept;
         static bool exists(cstr path) noexcept;
-        static result<usize> bytes(cstr path) noexcept;
+        static result<::ox::bytes> bytes(cstr path) noexcept;
         static result<bool> is_dir(cstr path) noexcept;
         static result<bool> is_file(cstr path) noexcept;
         static result<bool> is_link(cstr path) noexcept;
@@ -150,7 +154,7 @@ namespace ox {
 
         result<usize> write(cvptr buf, usize len) noexcept;
         result<usize> write(cstr s) noexcept {
-            if (!s) return result<usize>{ file::invalid };
+            if (!s) return result<usize>{ results::err::invalid_parameter };
             usize len = 0;
             while (s[len]) ++len;
             return write(static_cast<cvptr>(s), len);
@@ -207,7 +211,7 @@ namespace ox {
         }
 
         result<usize> write(cstr s) noexcept {
-            if (!s) return result<usize>{ file::invalid };
+            if (!s) return result<usize>{ results::err::invalid_parameter };
             usize len = 0;
             while (s[len]) ++len;
             return write(static_cast<cvptr>(s), len);
@@ -226,5 +230,6 @@ namespace ox {
         char   _buf[N];
         usize  _pos  = 0;
     };
+
 }
 #endif //OMNIX_FILE_H

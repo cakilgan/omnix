@@ -6,6 +6,9 @@
 #include <omnix/platform/time.h>
 #include <ctime>
 
+#include "omnix/platform/result.h"
+#include <new>
+
 namespace ox {
     static ::ox::time_t _query_posix_ns(clockid_t clk_id) {
         struct timespec ts{};
@@ -39,16 +42,19 @@ namespace ox {
         return { 0 };
     }
 
-    i32 sleep(const time& dur) {
-        if (dur<=ox::nanoseconds(0)) return -1;
+    // sleeps current execution, returns the remaining nanoseconds.
+    result<time> sleep(const time& dur) {
+        if (dur<=ox::nanoseconds(0)) return time::err::negative_time;
         struct timespec ts{};
         ts.tv_sec = static_cast<::ox::time_t>(dur.ns / 1000000000LL);
         ts.tv_nsec = static_cast<long>(dur.ns % 1000000000LL);
 
-        if (nanosleep(&ts, nullptr) == -1) {
+        struct timespec rem{};
+        if (nanosleep(&ts, &rem) == -1) {
+            //fixme: implement custom error codes.
             return errno;
         }
 
-        return 1;
+        return ox::nanoseconds(rem.tv_nsec);
     }
 }

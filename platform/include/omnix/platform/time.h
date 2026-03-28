@@ -8,11 +8,18 @@
 #include "detect.h"
 #include "types.h"
 #include "defines.h"
+#include "result.h"
 
 namespace ox {
+    OX_RESULT_CATEGORY(time,-54000);
+
     OX_USING( time_t, i64 );
 
     struct time{
+        struct err {
+            OX_RESULT(time,negative_time);
+        };
+
         time_t ns;
         bool operator==( const time& rhs ) const { return ns == rhs.ns; }
         bool operator!=( const time& rhs ) const { return ns != rhs.ns; }
@@ -69,7 +76,7 @@ namespace ox {
         return T::now();
     }
 
-    i32 sleep(const time& dur);
+    result<time> sleep(const time& dur);
 }
 
 #endif //OMNIX_TIME_H

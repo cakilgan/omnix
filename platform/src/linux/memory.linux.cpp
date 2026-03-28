@@ -5,54 +5,63 @@
 #include <omnix/platform/memory.h>
 #include <sys/mman.h>
 #include <omnix/platform/util.h>
-
+#include <new>
 using namespace ox;
 
 
 result<memory> memory::allocate(bytes size) {
-    void* ptr = ::mmap(nullptr, size,
+    void* ptr = ::mmap(nullptr, size.ct,
            PROT_READ | PROT_WRITE,
            MAP_PRIVATE | MAP_ANONYMOUS | MAP_NORESERVE,
            -1, 0);
     if (ptr == MAP_FAILED) {
-        return allocation_error;
+        return err::allocation_error;
     }
     return memory{ptr,size,parent};
 }
 
 result_t       memory::release (memory& o) {
     OX_ASSERT(o.is_owner());
-    if (!o.is_owner()) return non_owner_release;
+    if (!o.is_owner()) return err::non_owner_release;
     if (o._Data) {
-        ::munmap(o._Data,o._Size);
+        ::munmap(o._Data,o._Size.ct);
         o._Data = nullptr;
-        o._Size = 0;
+        o._Size = bytes(0);
         o._Type = type::invalid;
         return ok;
     }
-    return already_released;
+    return err::already_released;
 }
 
 result<memory> memory::slice(memory &o, const loc start, const bytes size, loc ignore_start) {
-    OX_ASSERT(start + size.ct <= o._Size);
+    OX_ASSERT(start + size <= loczero + o._Size);
     if (o._slice_count_>=_max_slices_) {
         OX_FAIL("max_slice_overflow");
-        return max_slice_overflow;
+        return err::max_slice_overflow;
     }
     for (u8 i = 0; i < o._slice_count_; i++) {
         const auto slice = o._slices_[i];
 
-        // i am a moron.
-        if (in_btw(start,slice.start,slice.size)||
-            in_btw(start+size,slice.start,slice.size)||
-            contains(start,start+size,slice.start,slice.size)||
-            contains(slice.start,slice.size,start,size)) {
+        //fixme: i am a moron.
+#if OX_IS(BUILD,DEBUG)
+        const auto b1 = in_btw(start,slice.start,loczero + slice.size);
+        const auto b2 = in_btw(start+size,slice.start,loczero + slice.size);
+        const auto b3 = contains(start,start+size,slice.start,loczero + slice.size);
+        const auto b4 = contains(slice.start,loczero + slice.size,start,start+size);
+        if (b1||b2||b3||b4) {
+#else
+        if (in_btw(start,slice.start,loczero + slice.size)||
+            in_btw(start+size,slice.start,loczero + slice.size)||
+            contains(start,start+size,slice.start,loczero + slice.size)||
+            contains(slice.start,loczero + slice.size,start,start+size)
+            ) {
+#endif
             if (slice.start == ignore_start) continue;
             OX_FAIL("memory slice overlap.");
-            return slice_overlap;
+            return err::slice_overlap;
         }
     }
-    memory mem{(offset_ptr(o._Data,start)),size,child};
+    memory mem{(offset_ptr(o._Data,bytes(start))),size,child};
     mem._slice_start = start;
     u8 pos = o._slice_count_;
     for (u8 i = 0; i < o._slice_count_; i++) {
@@ -81,35 +90,35 @@ result_t memory::unslice(memory &owner, memory &child,bool set_zero) {
     }
     if (!found) {
         OX_FAIL("child not found in owner.");
-        return no_match_for_unslice;
+        return err::no_match_for_unslice;
     }
 
     if (set_zero) {
-        memset(child.data(),0,child.size());
+        memset(child.data(),0,child.size().ct);
     }
     child._Data = nullptr;
-    child._Size = 0;
+    child._Size = bytes(0);
     child._Type = type::invalid;
     return ok;
 }
 
 loc memory::find(memory &parent, bytes size, loc ignore_start) {
-    loc cursor = 0;
-    bool _ignore = ignore_start!=-1;
+    loc cursor = loczero;
+    bool _ignore = ignore_start != locinvalid;
     for (u8 i = 0; i < parent._slice_count_; i++) {
         const auto slice = parent._slices_[i];
         if (_ignore && slice.start == ignore_start) continue;
-        if (slice.start-cursor >= size) return cursor;
+        if (bytes_between(slice.start,cursor) >= size) return cursor;
         cursor = slice.start+slice.size;
     }
-    if (parent._Size - cursor >= size) return cursor;
-    return -1;
+    if (bytes_between((loczero + parent._Size) , cursor) >= size) return cursor;
+    return locinvalid;
 }
 
 
 result_t memory::grow(memory &parent, memory &child, bytes size) {
     auto loc = find(parent,size,child._slice_start);
-    if (loc==-1) return cannot_find_suitable_memory;
+    if (loc==locinvalid) return err::cannot_find_suitable_memory;
 
     auto mhndl = slice(parent,loc,size,child._slice_start);
     if (!mhndl) return mhndl.err();
@@ -119,7 +128,7 @@ result_t memory::grow(memory &parent, memory &child, bytes size) {
     void* old_data = child._Data;
     auto old_size = child._Size;
 
-    memmove(new_memory.data(), old_data, old_size);
+    memmove(new_memory.data(), old_data, old_size.ct);
 
     unslice(parent,child,false);
 
@@ -130,7 +139,7 @@ result_t memory::grow(memory &parent, memory &child, bytes size) {
 
     new_memory._Data = nullptr;
     new_memory._Type = type::invalid;
-    new_memory._Size = 0;
+    new_memory._Size = bytes(0);
 
     return ok;
 }
