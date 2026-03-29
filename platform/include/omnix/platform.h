@@ -4,6 +4,10 @@
 
 #ifndef OMNIX_OMNIX_PLATFORM_H
 #define OMNIX_OMNIX_PLATFORM_H
+/*
+ inf: CONFIG
+*/
+#include "config_platform.h"
 
 #include "platform/macros.h"
 #include "platform/detect.h"

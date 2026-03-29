@@ -1,0 +1,9 @@
+//
+// Created by cakilgan on 3/29/26.
+//
+
+#ifndef OMNIX_CONFIG_PLATFORM_H
+#define OMNIX_CONFIG_PLATFORM_H
+#define OX_TYPES_USE_STDINT
+#define OX_BYTE_NO_STD_HELPERS
+#endif //OMNIX_CONFIG_PLATFORM_H
