@@ -4,7 +4,7 @@
 #include <omnix/platform/crash.h>
 #include <unistd.h>
 #include <cstring>
-#include <signal.h>
+#include <csignal>
 #include <execinfo.h>
 
 namespace ox {
