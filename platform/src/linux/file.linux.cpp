@@ -41,7 +41,7 @@ namespace ox {
         }
 
         handle h;
-        h.raw = opq::make(new int(fd));
+        h.raw = opq::make(new int(fd),true);
         return result<file>{ file(static_cast<handle&&>(h)) };
     }
 
