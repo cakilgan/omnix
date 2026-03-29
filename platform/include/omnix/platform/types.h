@@ -92,13 +92,17 @@ namespace ox {
                 void* _raw = nullptr;
                 type_id _type{type_of<void>()};
                 void (*_deleter)(void*) = nullptr;
+                bool _owner;
                 opaque() = default;
                 template<typename T>
-                static opaque make(T* ptr) {
+                static opaque make(T* ptr,bool _owner = false) {
                     return opaque{
                         ptr,
                         type_of<T>(),
-                        [](vptr p) { delete static_cast<T*>(p); }
+                        [](vptr p) {
+                            delete static_cast<T*>(p);
+                        },
+                        _owner
                    };
                 }
 
@@ -107,7 +111,7 @@ namespace ox {
                 }
 
                 void reset() noexcept {
-                    if (_raw && _deleter) {
+                    if (_raw && _deleter && _owner) {
                         _deleter(_raw);
                     }
                     _raw = nullptr;
@@ -118,11 +122,13 @@ namespace ox {
                 opaque(opaque&& other) noexcept
                     : _raw(other._raw),
                     _type(other._type),
-                    _deleter(other._deleter)
+                    _deleter(other._deleter),
+                    _owner(other._owner)
                 {
                     other._raw = nullptr;
                     other._deleter = nullptr;
                     other._type = type_of<void>();
+                    other._owner = false;
                 }
 
                 opaque& operator=(opaque&& other) noexcept {
@@ -131,10 +137,12 @@ namespace ox {
                         _raw = other._raw;
                         _type = other._type;
                         _deleter = other._deleter;
+                        _owner = other._owner;
 
                         other._raw = nullptr;
                         other._deleter = nullptr;
                         other._type = type_of<void>();
+                        other._owner = false;
                     }
                     return *this;
                 }
@@ -158,13 +166,14 @@ namespace ox {
                     _raw = nullptr;
                     _deleter = nullptr;
                     _type = type_of<void>();
+                    _owner = false;
                     return tmp;
                 }
 
                 friend void swap(opaque& a, opaque& b) noexcept;
             private:
-            opaque(void* p, const type_id& ti, void(*d)(void*))
-                : _raw(p), _type(ti), _deleter(d) {}
+            opaque(void* p, const type_id& ti, void(*d)(void*),bool owner)
+                : _raw(p), _type(ti), _deleter(d),_owner(owner) {}
         };
     );
 
