@@ -10,7 +10,7 @@ namespace ox {
     struct strview {
         cstr data {nullptr};
         usize len {0};
-        template<size_t N>
+        template<usize N>
         constexpr strview(const char (&arr)[N])
         : data(arr), len(N-1) {}
 
