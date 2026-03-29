@@ -6,7 +6,7 @@
 #define OMNIX_UTIL_H
 #include "omnix/platform/defines.h"
 #include "result.h"
-#include "assert.h"
+#include "../platform/assert.h"
 #include "byte.h"
 
 namespace ox {
@@ -72,8 +72,8 @@ namespace ox {
         return check;
     }
 
-    constexpr size_t strlen(const char* str) {
-        size_t count = 0;
+    constexpr usize strlen(const char* str) {
+        usize count = 0;
         while (str[count] != '\0') count++;
         return count;
     }
