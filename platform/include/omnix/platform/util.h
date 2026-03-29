@@ -65,9 +65,11 @@ namespace ox {
         return static_cast<_Tp&&>(__t);
     }
 
-    OX_INLINE  bool safe(vptr check) {
-        OX_ASSERT(check != nullptr);
-        return check != nullptr;
+
+    template<typename T>
+    T* safe(T* check) {
+        OX_CHECK(check!=nullptr);
+        return check;
     }
 
     constexpr size_t strlen(const char* str) {
