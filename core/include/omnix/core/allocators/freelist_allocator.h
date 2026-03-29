@@ -4,9 +4,11 @@
 
 #ifndef OMNIX_FREELIST_ALLOCATOR_H
 #define OMNIX_FREELIST_ALLOCATOR_H
+
 #include <cstring>
 #include <omnix/platform/memory.h>
 #include <omnix/platform/util.h>
+#include <new>
 
 namespace ox {
 
