@@ -37,6 +37,15 @@ namespace ox{
         struct sloc {
             i64 value;
             explicit OX_FORCE_CONSTEXPR sloc(const i64 v = 0x0) : value(v){}
+            OX_FORCE_CONSTEXPR OX_INLINE sloc &operator++() {
+                value++;
+                return *this;
+            }
+            OX_FORCE_CONSTEXPR OX_INLINE sloc operator++(int _dummy) {
+                auto old_v = value;
+                value++;
+                return sloc{old_v};
+            }
         };
         OX_FORCE_CONSTEXPR bool operator==(sloc a, sloc b) { return a.value == b.value; }
         OX_FORCE_CONSTEXPR bool operator!=(sloc a, sloc b) { return a.value != b.value; }
