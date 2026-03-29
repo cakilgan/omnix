@@ -6,6 +6,7 @@
 #define OMNIX_FILE_H
 
 #include "types.h"
+#include "opaque.h"
 #include "result.h"
 #include "byte.h"
 

@@ -13,6 +13,7 @@
 #include "platform/detect.h"
 #include "platform/defines.h"
 #include "platform/types.h"
+#include "platform/opaque.h"
 #include "platform/assert.h"
 #include "platform/crash.h"
 #include "platform/util.h"

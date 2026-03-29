@@ -2,6 +2,7 @@
 // Created by cakilgan on 3/3/26.
 //
 #include <omnix/platform/types.h>
+#include <omnix/platform/opaque.h>
 #include <utility>
 
 
