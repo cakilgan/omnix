@@ -49,34 +49,34 @@ namespace ox {
     OX_FORCE_CONSTEXPR OX_INLINE time    operator/       (const i64 scalar,const time& a)  { return {scalar / a.ns}; }
 
     namespace clocks{
-        struct monotonic {
+        struct monotonic final{
             monotonic() = delete;
-            static time now();
+            static time now() noexcept;
         };
-        struct steady {
+        struct steady final{
             steady() = delete;
-            static time now();
+            static time now() noexcept;
         };
-        struct wall {
+        struct wall final{
             wall() = delete;
-            static time now();
+            static time now() noexcept;
         };
-        struct process_relative {
+        struct process_relative final{
             process_relative() = delete;
-            static time now();
+            static time now() noexcept;
         };
-        struct thread_relative {
+        struct thread_relative final{
             thread_relative() = delete;
-            static time now();
+            static time now() noexcept;
         };
     }
 
     template<typename T = clocks::monotonic>
-    time now() {
+    time now() noexcept{
         return T::now();
     }
 
-    result<time> sleep(const time& dur);
+    result<time> sleep(const time &dur) ;
 }
 
 #endif //OMNIX_TIME_H

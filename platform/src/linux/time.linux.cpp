@@ -18,23 +18,23 @@ namespace ox {
 
     using namespace ox::clocks;
 
-    time monotonic::now() {
+    time monotonic::now() noexcept{
         return {_query_posix_ns(CLOCK_MONOTONIC)};
     }
-    time steady::now() {
+    time steady::now() noexcept{
         return {_query_posix_ns(CLOCK_MONOTONIC_RAW)};
     }
-    time wall::now() {
+    time wall::now() noexcept{
         return {_query_posix_ns(CLOCK_REALTIME)};
     }
-    time process_relative::now() {
+    time process_relative::now() noexcept{
         struct timespec ts{};
         if (clock_gettime(CLOCK_PROCESS_CPUTIME_ID, &ts) == 0) {
             return { (time_t)ts.tv_sec * 1000000000LL + (time_t)ts.tv_nsec };
         }
         return { 0 };
     }
-    time thread_relative::now() {
+    time thread_relative::now() noexcept{
         struct timespec ts{};
         if (clock_gettime(CLOCK_THREAD_CPUTIME_ID, &ts) == 0) {
             return { (::ox::time_t)ts.tv_sec * 1000000000LL + (::ox::time_t)ts.tv_nsec };
@@ -43,7 +43,7 @@ namespace ox {
     }
 
     // sleeps current execution, returns the remaining nanoseconds.
-    result<time> sleep(const time& dur) {
+    result<time> sleep(const time &dur) {
         if (dur<=ox::nanoseconds(0)) return time::err::negative_time;
         struct timespec ts{};
         ts.tv_sec = static_cast<::ox::time_t>(dur.ns / 1000000000LL);
