@@ -9,6 +9,7 @@ if(UNIX)
             src/linux/time.linux.cpp
             src/linux/memory.linux.cpp
             src/linux/assert.linux.cpp
+            src/linux/crash.linux.cpp
     )
 elseif(WIN32)
     #implement
