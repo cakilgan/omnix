@@ -4,14 +4,15 @@
 
 #ifndef OMNIX_VECTOR_H
 #define OMNIX_VECTOR_H
-#include <omnix/platform.h>
 
-#include "allocators/freelist_allocator.h"
-
+#include <omnix/platform/types.h>
+#include <omnix/platform/byte.h>
+#include <omnix/platform/result.h>
+#include <omnix/platform/util.h>
 
 namespace ox {
     namespace containers {
-        template <typename T, typename Allocator = freelist_allocator>
+        template <typename T, typename Allocator>
         struct vector {
         private:
             Allocator* _allocator{nullptr};
@@ -29,7 +30,7 @@ namespace ox {
 
                 if (_data) {
                     for (usize i = 0; i < _size; ++i) {
-                        new (new_data + i) T(std::move(_data[i]));
+                        new (new_data + i) T(ox::move(_data[i]));
                         _data[i].~T();
                     }
                     _allocator->free(_data);
@@ -80,7 +81,7 @@ namespace ox {
                 return *(_data+_size);
             }
             void push_back(const T& x) { emplace_back(x); }
-            void push_back(T&& x)      { emplace_back(std::move(x)); }
+            void push_back(T&& x)      { emplace_back(ox::move(x)); }
 
             void  clear() {
                 for (usize i = 0; i < _size; ++i) {
