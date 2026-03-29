@@ -50,12 +50,14 @@
 #endif
 
 // ==================== Build Mode Detection ====================
-#if !defined(OX_DEBUG) && !defined(OX_PRODUCT)
-    #define OX_BUILD OX_BUILD_RELEASE
-#elif OX_PRODUCT
-    #define OX_BUILD OX_BUILD_PRODUCTION
-#else
-    #define OX_BUILD OX_BUILD_DEBUG
+#if defined(OX_DEBUG)
+#define OX_BUILD OX_BUILD_DEBUG
+#elif defined(OX_RELEASE)
+#define OX_BUILD OX_BUILD_RELEASE
+#elif defined(OX_RELDEBUGINFO)
+#define OX_BUILD OX_BUILD_RELDEBUGINFO
+#elif defined(OX_PRODUCT)
+#define OX_BUILD OX_BUILD_PRODUCT
 #endif
 
 // ==================== Endiannes Detection ====================

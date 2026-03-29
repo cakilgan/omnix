@@ -22,8 +22,9 @@
 #define OX_ARCH_64          0
 #define OX_ARCH_32          1
 
-#define OX_BUILD_DEBUG      0
-#define OX_BUILD_RELEASE    1
-#define OX_BUILD_PRODUCTION 2
+#define OX_BUILD_DEBUG        0
+#define OX_BUILD_RELEASE      1
+#define OX_BUILD_RELDEBUGINFO 2
+#define OX_BUILD_PRODUCTION   3
 
 #endif //OMNIX_MACROS_H
