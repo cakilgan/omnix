@@ -6,6 +6,9 @@
 #define OMNIX_HASHMAP_H
 #include "allocators/freelist_allocator.h"
 
+//warn: std
+#include <type_traits>
+
 namespace ox {
     namespace containers {
         template<typename T, typename U, typename Allocator = freelist_allocator>
