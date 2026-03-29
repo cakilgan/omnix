@@ -5,8 +5,6 @@
 #ifndef OMNIX_TYPES_H
 #define OMNIX_TYPES_H
 
-#define OX_TYPES_USE_STDINT
-
 #ifdef OX_TYPES_USE_STDINT
 #include <cstdint>
 #endif
