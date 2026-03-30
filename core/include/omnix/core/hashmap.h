@@ -4,14 +4,16 @@
 
 #ifndef OMNIX_HASHMAP_H
 #define OMNIX_HASHMAP_H
-#include "allocators/freelist_allocator.h"
 
 //warn: std
 #include <type_traits>
+#include "engine_memory_internal.h"
+
+#include "allocators/allocator.h"
 
 namespace ox {
     namespace containers {
-        template<typename T, typename U, typename Allocator = freelist_allocator>
+        template<typename T, typename U, typename Allocator = allocator>
         struct hashmap {
             OX_USING(key  ,  T);
             OX_USING(value,  U);
@@ -121,6 +123,10 @@ namespace ox {
                 for (usize i = 0; i < _bucket_count; ++i)
                     new (&_buckets[i]) bucket{};
             }
+            explicit hashmap(engine::memory::type memory_type = engine::memory::GENERAL, usize reserve = 4)
+                :hashmap(ox::safe(engine::memory::get_allocator<T>(memory_type)),reserve){
+            }
+
             hashmap(const hashmap&) = delete;
             hashmap& operator=(const hashmap&) = delete;
 
@@ -167,19 +173,42 @@ namespace ox {
                 _u_put(ox::forward<K>(key), ox::forward<V>(value));
             }
 
-            bool get(const T& key, U& out) const {
+            U* get(const T& key) {
                 const usize idx = hash<T>{}(key) & (_bucket_count-1);
                 for (usize i = 0; i < _bucket_count; ++i) {
-                    const auto& b = _buckets[(idx + i) & (_bucket_count-1)];
+                    auto& b = _buckets[(idx + i) & (_bucket_count-1)];
                     if (b._state == empty) {
-                        return false;
+                        return nullptr;
                     }
                     if (b._state == occupied && b._key == key) {
-                        out = b._value;
-                        return true;
+                        return &b._value;
                     }
                 }
-                return false;
+                return nullptr;
+            }
+            template<typename... Args>
+            U& get_or_emplace(const T& key, Args&&... args) {
+                _u_if_grow();
+
+                const usize idx = hash<T>{}(key) & (_bucket_count-1);
+
+                for (usize i = 0; i < _bucket_count; ++i) {
+                    auto& b = _buckets[(idx + i) & (_bucket_count-1)];
+
+                    if (b._state == occupied && b._key == key) {
+                        return b._value;
+                    }
+
+                    if (b._state != occupied) {
+                        new (&b._key) T(key);
+                        new (&b._value) U(ox::forward<Args>(args)...);
+                        b._state = occupied;
+                        _occupied_buckets++;
+                        return b._value;
+                    }
+                }
+
+                OX_UNREACHABLE();
             }
 
             bool remove(const T& key) {
@@ -197,6 +226,13 @@ namespace ox {
                     }
                 }
                 return false;
+            }
+
+            Allocator* allocator() {
+                return _allocator;
+            }
+            Allocator* allocator() const{
+                return _allocator;
             }
 
 
