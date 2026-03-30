@@ -63,6 +63,7 @@ namespace ox {
 
         OX_FORCE_CONSTEXPR bytes operator-(const bytes& rhs) const { return bytes(ct - rhs.ct);}
         OX_FORCE_CONSTEXPR bytes operator+(const bytes& rhs) const { return bytes(ct + rhs.ct);}
+        OX_FORCE_CONSTEXPR usize operator/(const bytes& rhs) const { return static_cast<usize>(ct / rhs.ct);    }
         OX_FORCE_CONSTEXPR bytes operator%(const bytes& rhs) const { return bytes(ct % rhs.ct);}
     };
 
