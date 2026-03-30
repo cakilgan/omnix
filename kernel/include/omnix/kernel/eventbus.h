@@ -1,6 +1,7 @@
 #ifndef OMNIX_EVENTBUS_H
 #define OMNIX_EVENTBUS_H
 
+#include "omnix/core/engine_memory_internal.h"
 #include <omnix/platform/types.h>
 #include <omnix/core/vector.h>
 #include <omnix/core/hashmap.h>
@@ -28,8 +29,8 @@ namespace ox {
         hashmap<types::type_id, vector<handler>> _listeners;
 
     public:
-        explicit eventbus(freelist_allocator* allocator)
-            : _listeners(allocator) {}
+        explicit eventbus()
+            : _listeners(engine::memory::get_allocator<bool>(engine::memory::KERNEL)) {}
 
         template<typename T, void(*fn)(const T*)>
         void subscribe() {
