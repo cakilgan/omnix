@@ -8,7 +8,7 @@
 //warn: std
 #include <type_traits>
 #include "engine_memory_internal.h"
-
+#include "hash.h"
 #include "allocators/allocator.h"
 
 namespace ox {
@@ -118,6 +118,7 @@ namespace ox {
         public:
             explicit hashmap(Allocator* allocator, const usize reserve_bucket = 4)
             :_allocator(allocator){
+                OX_ASSERT(allocator != nullptr);
                 _bucket_count = reserve_bucket > 0 ? nextpow2(reserve_bucket) : 4;
                 _buckets = static_cast<bucket *>(allocator->alloc(_u_convert_bucket(_bucket_count)));
                 for (usize i = 0; i < _bucket_count; ++i)
