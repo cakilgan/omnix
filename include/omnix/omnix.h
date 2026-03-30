@@ -6,4 +6,5 @@
 #define OMNIX_OMNIX_H
 #include <omnix/platform.h>
 #include <omnix/core.h>
+#include <omnix/kernel.h>
 #endif //OMNIX_OMNIX_H
