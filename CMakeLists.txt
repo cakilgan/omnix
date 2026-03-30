@@ -54,17 +54,16 @@ file(GLOB_RECURSE OX_SOURCES "src/*.cpp")
 # ------------------------------
 add_subdirectory(platform)
 add_subdirectory(core)
+add_subdirectory(kernel)
 
 # ------------------------------
 # Engine library
 # ------------------------------
 add_library(omnix_engine ${OX_SOURCES})
-target_include_directories(omnix_engine PRIVATE "include")
-target_link_libraries(omnix_engine PUBLIC oxlayer_platform oxlayer_core)
+target_include_directories(omnix_engine PUBLIC "include")
+target_link_libraries(omnix_engine PUBLIC oxlayer_kernel oxlayer_core oxlayer_platform)
 
 # ------------------------------
 # Executable
 # ------------------------------
-add_executable(omnix main.cpp)
-target_include_directories(omnix PRIVATE "include")
-target_link_libraries(omnix PUBLIC omnix_engine)
+add_subdirectory(entrypoint)
