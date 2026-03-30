@@ -12,12 +12,16 @@ namespace engine::memory {
     enum type {
         GENERAL,
         FRAME,
-        RESOURCE
+        RESOURCE,
+        KERNEL
     };
     namespace general {
         extern ox::freelist_allocator* small;
         extern ox::freelist_allocator* medium;
         extern ox::freelist_allocator* big;
+    }
+    namespace kernel{
+        extern ox::freelist_allocator* single;
     }
 
     template<typename T>
@@ -27,6 +31,9 @@ namespace engine::memory {
             if constexpr (size < ox::bytes(32))  return general::small;
             if constexpr (size > ox::bytes(256)) return general::big;
             return general::medium;
+        }
+        if (memory_type == KERNEL){
+            return kernel::single;
         }
         return nullptr;
     }
