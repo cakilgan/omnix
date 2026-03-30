@@ -72,9 +72,10 @@ namespace ox {
         return check;
     }
 
-    constexpr usize strlen(const char* str) {
+    template<typename T>
+    constexpr usize strlen(const T* str) {
         usize count = 0;
-        while (str[count] != '\0') count++;
+        while (str[count] != T(0)) count++;
         return count;
     }
 
