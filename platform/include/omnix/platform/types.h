@@ -67,7 +67,7 @@ namespace ox {
         OX_USING( vptrc,     void*const  );
 
         using type_id = u64;
-        namespace __detail {
+        namespace impl {
             inline u64 next_type_id() {
                 static u64 counter = 0;
                 return ++counter;
@@ -76,7 +76,7 @@ namespace ox {
 
         template<typename T>
         type_id type_of() {
-            static type_id id = __detail::next_type_id();
+            static type_id id = impl::next_type_id();
             return id;
         }
         template<typename T>
