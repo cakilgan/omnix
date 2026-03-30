@@ -7,4 +7,5 @@
 #include <omnix/platform.h>
 #include <omnix/core.h>
 #include <omnix/kernel.h>
+#include <omnix/runtime.h>
 #endif //OMNIX_OMNIX_H
