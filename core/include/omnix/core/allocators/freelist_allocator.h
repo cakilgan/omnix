@@ -10,10 +10,12 @@
 #include <omnix/platform/util.h>
 #include <new>
 
+#include "allocator.h"
+
 namespace ox {
 
     // this is NOT fast, but it works.
-    struct freelist_allocator {
+    struct freelist_allocator : allocator{
     private:
         void coalesce(){
             block* b = _free_list;
@@ -32,12 +34,11 @@ namespace ox {
             block* next;
         };
 
-        memory  _mem;
         block*  _free_list{nullptr};
     public:
 
 
-        explicit freelist_allocator(memory get_memory):_mem(ox::move(get_memory)) {
+        explicit freelist_allocator(memory get_memory):allocator(ox::move(get_memory)) {
             OX_ASSERT(_mem.size()>size_of<block>());
             _free_list = new (_mem.data()) block();
             _free_list->next = nullptr;
@@ -82,7 +83,7 @@ namespace ox {
             return nullptr;
         }
 
-        result_t  free(vptr ptr) {
+        result_t  free(vptr ptr){
             OX_ASSERT(ptr);
             if (!ptr) return results::err::invalid_parameter;
 
@@ -105,7 +106,7 @@ namespace ox {
             return ok;
         }
 
-        vptr grow(vptr ptr, bytes old_size, bytes new_size) {
+        vptr grow(vptr ptr, bytes old_size, bytes new_size){
             OX_ASSERT(ptr);
             if (!ptr) return nullptr;
 
@@ -159,12 +160,21 @@ namespace ox {
             }
 
             if (auto new_alloc = alloc(new_size)) {
-                memcpy(new_alloc, ptr, aligned_old.ct);
                 this->free(ptr);
                 return new_alloc;
             }
 
             return nullptr;
+        }
+
+        result<bytes> size(vptr ptr) const {
+            OX_ASSERT(ptr);
+            if (!ptr) return results::err::invalid_parameter;
+            if (static_cast<byte*>(ptr) < static_cast<byte *>(_mem.data()) ||
+                            static_cast<byte*>(ptr) >= static_cast<byte *>(_mem.data()) + _mem.size()) return results::err::invalid_parameter;
+            auto b = reinterpret_cast<block *>(static_cast<byte*>(ptr) - size_of<block>());
+            OX_ASSERT(b);
+            return b->size;
         }
     };
 }
