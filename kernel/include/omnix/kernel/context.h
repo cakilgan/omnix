@@ -12,7 +12,7 @@ namespace ox {
         private:
             eventbus _bus;
         public:
-            explicit context(freelist_allocator* allocator):_bus(allocator){}
+            context() = default;
             result_t init();
             result_t tick(f32 dt);
             result_t shutdown();
