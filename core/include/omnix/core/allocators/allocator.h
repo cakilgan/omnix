@@ -7,12 +7,15 @@
 #include <omnix/platform/types.h>
 #include <omnix/platform/byte.h>
 #include <omnix/platform/result.h>
+#include <omnix/platform/memory.h>
+#include <omnix/platform/util.h>
 namespace ox {
     struct allocator {
     protected:
         memory  _mem;
     public:
         explicit allocator(memory mem):_mem(ox::move(mem)){}
+        explicit allocator() = default;
         virtual ~allocator() = default;
         virtual vptr alloc(bytes size) = 0;
         virtual result_t  free(vptr ptr) = 0;
