@@ -1,6 +1,7 @@
 //
 // Created by cakilgan on 3/7/26.
 //
+#include "omnix/platform/assert.h"
 #include <cstring>
 #include <omnix/platform/memory.h>
 #include <sys/mman.h>
@@ -10,6 +11,7 @@ using namespace ox;
 
 
 result<memory> memory::allocate(bytes size) {
+    OX_ASSERT(size != bytes(0));
     void* ptr = ::mmap(nullptr, size.ct,
            PROT_READ | PROT_WRITE,
            MAP_PRIVATE | MAP_ANONYMOUS | MAP_NORESERVE,
@@ -21,7 +23,7 @@ result<memory> memory::allocate(bytes size) {
 }
 
 result_t       memory::release (memory& o) {
-    OX_ASSERT(o.is_owner());
+    OX_ASSERT(o.is_owner() && !o.is_invalid());
     if (!o.is_owner()) return err::non_owner_release;
     if (o._Data) {
         ::munmap(o._Data,o._Size.ct);
@@ -34,28 +36,20 @@ result_t       memory::release (memory& o) {
 }
 
 result<memory> memory::slice(memory &o, const loc start, const bytes size, loc ignore_start) {
+    OX_ASSERT(!o.is_invalid());
+    OX_ASSERT(start + size >= start); // overflow check
     OX_ASSERT(start + size <= loczero + o._Size);
+
     if (o._slice_count_>=_max_slices_) {
         OX_FAIL("max_slice_overflow");
         return err::max_slice_overflow;
     }
     for (u8 i = 0; i < o._slice_count_; i++) {
         const auto slice = o._slices_[i];
-
-        //fixme: i am a moron.
-#if OX_IS(BUILD,DEBUG)
-        const auto b1 = in_btw(start,slice.start,loczero + slice.size);
-        const auto b2 = in_btw(start+size,slice.start,loczero + slice.size);
-        const auto b3 = contains(start,start+size,slice.start,loczero + slice.size);
-        const auto b4 = contains(slice.start,loczero + slice.size,start,start+size);
-        if (b1||b2||b3||b4) {
-#else
-        if (in_btw(start,slice.start,loczero + slice.size)||
-            in_btw(start+size,slice.start,loczero + slice.size)||
-            contains(start,start+size,slice.start,loczero + slice.size)||
-            contains(slice.start,loczero + slice.size,start,start+size)
-            ) {
-#endif
+        auto end1 = start + size;
+        auto end2 = slice.start + slice.size;
+        bool overlap = !(end1 <= slice.start || start >= end2);
+        if (overlap) {
             if (slice.start == ignore_start) continue;
             OX_FAIL("memory slice overlap.");
             return err::slice_overlap;
@@ -78,6 +72,7 @@ result<memory> memory::slice(memory &o, const loc start, const bytes size, loc i
 }
 
 result_t memory::unslice(memory &owner, memory &child,bool set_zero) {
+    OX_ASSERT(!owner.is_invalid());
     bool found = false;
     for (u8 i = 0; i < owner._slice_count_; i++) {
         if (owner._slices_[i].start == child._slice_start) {
@@ -103,6 +98,8 @@ result_t memory::unslice(memory &owner, memory &child,bool set_zero) {
 }
 
 loc memory::find(memory &parent, bytes size, loc ignore_start) {
+    OX_ASSERT(size != bytes(0));
+    OX_ASSERT(!parent.is_invalid());
     loc cursor = loczero;
     bool _ignore = ignore_start != locinvalid;
     for (u8 i = 0; i < parent._slice_count_; i++) {
@@ -117,6 +114,10 @@ loc memory::find(memory &parent, bytes size, loc ignore_start) {
 
 
 result_t memory::grow(memory &parent, memory &child, bytes size) {
+    OX_ASSERT(!parent.is_invalid());
+    OX_ASSERT(!child.is_invalid());
+    OX_ASSERT(size != bytes(0));
+
     auto loc = find(parent,size,child._slice_start);
     if (loc==locinvalid) return err::cannot_find_suitable_memory;
 
@@ -125,7 +126,7 @@ result_t memory::grow(memory &parent, memory &child, bytes size) {
 
     auto new_memory = ox::move(mhndl.value());
 
-    void* old_data = child._Data;
+    vptr old_data = child._Data;
     auto old_size = child._Size;
 
     memmove(new_memory.data(), old_data, old_size.ct);

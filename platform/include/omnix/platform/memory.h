@@ -203,6 +203,9 @@ namespace ox {
         bool is_owner() const noexcept {
             return _Type == parent;
         }
+        bool is_invalid() const noexcept{
+            return _Type == invalid;
+        }
 
     private:
 
