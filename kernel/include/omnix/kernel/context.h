@@ -6,16 +6,16 @@
 #define OMNIX_CONTEXT_H
 #include "eventbus.h"
 
-namespace ox {
+namespace engine {
     namespace kernel {
         struct context {
         private:
             eventbus _bus;
         public:
             context() = default;
-            result_t init();
-            result_t tick(f32 dt);
-            result_t shutdown();
+            ox::result_t init();
+            ox::result_t tick(ox::f32 dt);
+            ox::result_t shutdown();
 
             eventbus* bus() {
                 return &_bus;

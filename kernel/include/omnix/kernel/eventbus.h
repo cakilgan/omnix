@@ -6,27 +6,27 @@
 #include <omnix/core/vector.h>
 #include <omnix/core/hashmap.h>
 
-namespace ox {
+namespace engine {
     struct eventbus {
     private:
         struct handler {
-            OX_USING(call_t, void(*)(cvptr));
+            OX_USING(call_t, void(*)(ox::cvptr));
 
             call_t trampoline;
-            cvptr  original_fn;
+            ox::cvptr  original_fn;
 
             template<typename T, void(*fn)(const T*)>
             static handler make() {
                 return handler {
-                    [](cvptr p) {
+                    [](ox::cvptr p) {
                         fn(static_cast<const T*>(p));
                     },
-                    reinterpret_cast<cvptr>(fn)
+                    reinterpret_cast<ox::cvptr>(fn)
                 };
             }
         };
 
-        hashmap<types::type_id, vector<handler>> _listeners;
+        ox::hashmap<ox::types::type_id, ox::vector<handler>> _listeners;
 
     public:
         explicit eventbus()
@@ -35,7 +35,7 @@ namespace ox {
         template<typename T, void(*fn)(const T*)>
         void subscribe() {
             auto& handlers = _listeners.get_or_emplace(
-                types::type_of<T>(),
+                ox::types::type_of<T>(),
                 _listeners.allocator(),
                 4
             );
@@ -44,12 +44,12 @@ namespace ox {
 
         template<typename T, void(*fn)(const T*)>
         void unsubscribe() {
-            auto* handlers = _listeners.get(types::type_of<T>());
+            auto* handlers = _listeners.get(ox::types::type_of<T>());
             if (!handlers) return;
 
-            cvptr target_addr = reinterpret_cast<cvptr>(fn);
+            auto target_addr = reinterpret_cast<ox::cvptr>(fn);
 
-            for (usize i = 0; i < handlers->size(); ++i) {
+            for (ox::usize i = 0; i < handlers->size(); ++i) {
                 if ((*handlers)[i].original_fn == target_addr) {
                     if (i < handlers->size() - 1) {
                         (*handlers)[i] = handlers->back();
@@ -62,11 +62,11 @@ namespace ox {
 
         template<typename T>
         void emit(const T* data) {
-            auto* handlers = _listeners.get(types::type_of<T>());
+            auto* handlers = _listeners.get(ox::types::type_of<T>());
             if (!handlers) return;
 
             for (auto& h : *handlers) {
-                h.trampoline(static_cast<cvptr>(data));
+                h.trampoline(static_cast<ox::cvptr>(data));
             }
         }
     };

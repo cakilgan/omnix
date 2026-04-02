@@ -2,7 +2,7 @@
 #include <omnix/runtime.h>
 #include <omnix/platform/crash.h>
 
-ox::result_t engine::runtime::boot(const engine::config &config, const engine::args &args){
+ox::result_t engine::runtime::boot(kernel::context* context ,const config &config, const args &args){
     return ox::ok;
 }
 
