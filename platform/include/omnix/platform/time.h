@@ -20,6 +20,7 @@ namespace ox {
             OX_RESULT(time,negative_time);
         };
 
+        constexpr time(time_t nanoseconds = 0):ns(nanoseconds){}
         time_t ns;
         bool operator==( const time& rhs ) const { return ns == rhs.ns; }
         bool operator!=( const time& rhs ) const { return ns != rhs.ns; }
