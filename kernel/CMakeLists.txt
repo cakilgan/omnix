@@ -1,5 +1,6 @@
 add_library(oxlayer_kernel
         src/kernel.cpp
+        src/context.cpp
 )
 
 if(UNIX)
