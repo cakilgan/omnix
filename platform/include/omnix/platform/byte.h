@@ -103,4 +103,9 @@ namespace ox {
     }
 } // namespace ox
 
+#define OX_BYTES(x) ::ox::bytes(x)
+#define OX_KB(x) ::ox::kilobytes(x)
+#define OX_MB(x) ::ox::megabytes(x)
+#define OX_GB(x) ::ox::gigabytes(x)
+
 #endif // OMNIX_BYTE_H
