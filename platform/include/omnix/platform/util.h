@@ -8,6 +8,7 @@
 #include "result.h"
 #include "../platform/assert.h"
 #include "byte.h"
+#include "crash.h"
 
 namespace ox {
     //NOTE: exact copy of std:: type trait , utils.
@@ -35,6 +36,7 @@ namespace ox {
     using __bool_constant = integral_constant<bool, __v>;
     using true_type =  __bool_constant<true>;
     using false_type = __bool_constant<false>;
+    template<typename...> using void_t = void;
 
     template<typename>
     struct is_lvalue_reference
