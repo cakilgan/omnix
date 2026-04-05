@@ -5,6 +5,8 @@
 #ifndef OMNIX_HASH_H
 #define OMNIX_HASH_H
 #include <omnix/platform/types.h>
+
+#include "../core/string.h"
 #include "strview.h"
 namespace ox {
     template<typename T>
@@ -35,7 +37,7 @@ namespace ox {
 
     template<>
         struct hash<strview> {
-        usize operator()(const strview& s) const {
+        constexpr usize operator()(const strview& s) const {
             usize hash = 1469598103934665603ULL;
 
             for (usize i = 0; i != s.len; ++i) {
@@ -72,6 +74,12 @@ namespace ox {
     struct hash<bool> {
         usize operator()(bool v) const {
             return v ? 0x9e3779b97f4a7c15ULL : 0;
+        }
+    };
+    template<>
+    struct hash<str> {
+        usize operator()(str v) const {
+            return hash<strview>{}(v.data());
         }
     };
 
