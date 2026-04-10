@@ -19,6 +19,7 @@ ox::freelist_allocator *engine::memory::general::big = nullptr;
 ox::freelist_allocator *engine::memory::kernel::single = nullptr;
 
 
+engine::runtime::states engine::runtime::state = states::not_started;
 
 #define MEMORY_RESULT(x,name)\
     if(!x){OX_CRASH(#x);}\
@@ -86,17 +87,26 @@ int main(int argc, char** argv) {
     static engine::config CONFIG;
     static engine::args ARGS{argv, argc};
 
+
+    engine::runtime::state = engine::runtime::states::init;
     if (engine::runtime::boot(CONFIG, ARGS) != ox::ok)
         return EXIT_FAILURE;
 
-    constexpr ox::f32 dt = 1.f / 60.f;
-    for (int i = 0; i < 3; ++i) {
-        if (engine::runtime::pump(dt) != ox::ok)
+
+    engine::runtime::state = engine::runtime::states::run;
+    auto delta_time = ox::seconds(1)/60;
+    while (engine::runtime::state == engine::runtime::states::run) {
+        auto start = ox::now();
+        if (engine::runtime::pump(delta_time) != ox::ok)
             break;
+        auto end = ox::now();
+        delta_time = end - start;
     }
 
+    engine::runtime::state = engine::runtime::states::shutdown;
     if (engine::runtime::shutdown_context() != ox::ok)
         return EXIT_FAILURE;
 
+    engine::runtime::state = engine::runtime::states::stop;
     return EXIT_SUCCESS;
 }
