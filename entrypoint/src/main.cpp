@@ -1,4 +1,5 @@
 #include <omnix/omnix.h>
+#include <thread>
 
 ox::memory ENDLESS_MEMORY;
 ox::memory GENERAL;
@@ -15,11 +16,27 @@ ox::freelist_allocator *engine::memory::kernel::single = nullptr;
 
 engine::runtime::states engine::runtime::state = states::not_started;
 
+engine::logger::log_queue LOG_QUEUE{};
+engine::logger::log_queue<> *engine::logger::queue = nullptr;
+
 #define MEMORY_RESULT(x,name)\
     if(!x){OX_CRASH(#x);}\
-    name = ::ox::move(x.value());\
+    name = ::ox::move(x.value()); dbg("%s = ok",#x)\
 
 int main(int argc, char** argv) {
+    engine::logger::queue = &LOG_QUEUE;
+
+    auto LOG_WORKER = std::thread(  []{
+        engine::logger::log_event ev{};
+        while (LOG_QUEUE.pop(ev)) {
+            process(ev);
+        }
+    });
+    lifecycle("Hello World!");
+    lifecycle("starting OmniX engine...");
+
+
+    dbg("installing crash handler");
     // inf: installing crash handler functions.
     ox::install_crash_handler();
 
@@ -69,24 +86,30 @@ int main(int argc, char** argv) {
     engine::memory::general::small = &general_small_alloc;
     engine::memory::general::medium = &general_mid_alloc;
     engine::memory::general::big = &general_big_alloc;
+    dbg("creating general memory allocators");
 
     static ox::freelist_allocator kernel_alloc{ox::move(KERNEL_MEMORY)};
     engine::memory::kernel::single = &kernel_alloc;
+    dbg("creating kernel memory allocators");
 
     static engine::kernel::s_context kernel_context;
     engine::kernel::context = &kernel_context;
+    dbg("creating kernel context...");
 
     static engine::config CONFIG;
     static engine::args ARGS{argv, argc};
 
-
     engine::runtime::state = engine::runtime::states::init;
+    lifecycle("set state to init");
+    lifecycle("calling runtime::boot()");
     if (engine::runtime::boot(CONFIG, ARGS) != ox::ok)
         return EXIT_FAILURE;
-
+    lifecycle("runtime::boot() is ok");
 
     engine::runtime::state = engine::runtime::states::run;
+    lifecycle("set state to run");
     auto delta_time = ox::seconds(1)/60;
+    dbg("first frame fixed to 1/60");
     while (engine::runtime::state == engine::runtime::states::run) {
         auto start = ox::now();
         if (engine::runtime::pump(delta_time) != ox::ok)
@@ -94,11 +117,26 @@ int main(int argc, char** argv) {
         auto end = ox::now();
         delta_time = end - start;
     }
+    lifecycle("run state is finished");
 
     engine::runtime::state = engine::runtime::states::shutdown;
+    lifecycle("set state to shutdown");
     if (engine::runtime::shutdown_context() != ox::ok)
         return EXIT_FAILURE;
 
+
     engine::runtime::state = engine::runtime::states::stop;
+    lifecycle("set state to stop");
+
+
+    lifecycle("destroying logger context");
+    lifecycle("stopping OmniX engine...");
+    lifecycle("Goodbye World!");
+    while (!LOG_QUEUE.empty()) {
+        std::this_thread::yield();
+    }
+    LOG_QUEUE.stop();
+    if (LOG_WORKER.joinable()) LOG_WORKER.join();
+
     return EXIT_SUCCESS;
 }

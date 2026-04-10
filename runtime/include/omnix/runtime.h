@@ -4,6 +4,7 @@
 #include <omnix/platform.h>
 #include "runtime/args.h"
 #include "runtime/config.h"
+#include "runtime/logger.h"
 
 namespace engine {
     namespace runtime {
