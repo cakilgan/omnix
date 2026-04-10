@@ -18,7 +18,7 @@ namespace ox {
 
     template<>
         struct hash<u64> {
-        usize operator()(u64 x) const {
+        constexpr usize operator()(u64 x) const {
             x ^= x >> 33;
             x *= 0xff51afd7ed558ccdULL;
             x ^= x >> 33;
@@ -30,7 +30,7 @@ namespace ox {
 
     template<>
     struct hash<i32> {
-        usize operator()(i32 x) const {
+        constexpr usize operator()(i32 x) const {
             return hash<u64>{}(static_cast<u64>(static_cast<i64>(x)));
         }
     };
@@ -51,14 +51,14 @@ namespace ox {
 
     template<typename T>
     struct hash<T*> {
-        usize operator()(T* ptr) const {
+        constexpr usize operator()(T* ptr) const {
             return hash<u64>{}(reinterpret_cast<uptr>(ptr));
         }
     };
 
     template<>
     struct hash<cstr> {
-        usize operator()(cstr s) const {
+        constexpr usize operator()(cstr s) const {
             usize hash = 14695981039346656037ULL;
 
             while (*s) {
@@ -72,7 +72,7 @@ namespace ox {
 
     template<>
     struct hash<bool> {
-        usize operator()(bool v) const {
+        constexpr usize operator()(bool v) const {
             return v ? 0x9e3779b97f4a7c15ULL : 0;
         }
     };
