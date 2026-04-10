@@ -18,6 +18,7 @@
 #include "platform/crash.h"
 #include "platform/util.h"
 #include "platform/time.h"
+#include "platform/date.h"
 #include "platform/result.h"
 #include "platform/byte.h"
 #include "platform/file.h"
