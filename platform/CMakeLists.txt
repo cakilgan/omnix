@@ -10,7 +10,9 @@ if(UNIX)
             src/linux/memory.linux.cpp
             src/linux/assert.linux.cpp
             src/linux/crash.linux.cpp
+            src/linux/date.linux.cpp
     )
+    target_link_libraries(oxlayer_platform PUBLIC xcb)
 elseif(WIN32)
     #implement
 endif()
