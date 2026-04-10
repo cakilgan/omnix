@@ -9,7 +9,7 @@ ox::memory ENDLESS_MEMORY;
 
 ox::memory GENERAL;
 
-engine::kernel::context* KERNEL_CONTEXT = nullptr;
+engine::kernel::s_context* engine::kernel::context = nullptr;
 
 
 ox::freelist_allocator *engine::memory::general::small = nullptr;
@@ -80,22 +80,22 @@ int main(int argc, char** argv) {
     static ox::freelist_allocator kernel_alloc{ox::move(KERNEL_MEMORY)};
     engine::memory::kernel::single = &kernel_alloc;
 
-    static engine::kernel::context kernel_context;
-    KERNEL_CONTEXT = &kernel_context;
+    static engine::kernel::s_context kernel_context;
+    engine::kernel::context = &kernel_context;
 
     static engine::config CONFIG;
     static engine::args ARGS{argv, argc};
 
-    if (engine::runtime::boot(KERNEL_CONTEXT, CONFIG, ARGS) != ox::ok)
+    if (engine::runtime::boot(CONFIG, ARGS) != ox::ok)
         return EXIT_FAILURE;
 
     constexpr ox::f32 dt = 1.f / 60.f;
     for (int i = 0; i < 3; ++i) {
-        if (engine::runtime::pump(KERNEL_CONTEXT, dt) != ox::ok)
+        if (engine::runtime::pump(dt) != ox::ok)
             break;
     }
 
-    if (engine::runtime::shutdown_context(KERNEL_CONTEXT) != ox::ok)
+    if (engine::runtime::shutdown_context() != ox::ok)
         return EXIT_FAILURE;
 
     return EXIT_SUCCESS;

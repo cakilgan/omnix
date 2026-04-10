@@ -8,19 +8,22 @@
 
 namespace engine {
     namespace kernel {
-        struct context {
+        struct s_context {
         private:
             eventbus _bus;
         public:
-            context() = default;
+            s_context() = default;
+
             ox::result_t init();
-            ox::result_t tick(ox::f32 dt);
+            ox::result_t tick(ox::time dt);
             ox::result_t shutdown();
 
             eventbus* bus() {
                 return &_bus;
             }
         };
+
+        extern s_context* context;
     }
 }
 #endif //OMNIX_CONTEXT_H
