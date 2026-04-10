@@ -1,12 +1,6 @@
 #include <omnix/omnix.h>
 
-#include <omnix/kernel.h>
-
-#include <cstdlib>
-
-
 ox::memory ENDLESS_MEMORY;
-
 ox::memory GENERAL;
 
 engine::kernel::s_context* engine::kernel::context = nullptr;
@@ -25,8 +19,6 @@ engine::runtime::states engine::runtime::state = states::not_started;
     if(!x){OX_CRASH(#x);}\
     name = ::ox::move(x.value());\
 
-
-bool  Running = false;
 int main(int argc, char** argv) {
     // inf: installing crash handler functions.
     ox::install_crash_handler();
