@@ -10,19 +10,33 @@
 
 namespace ox {
     namespace types {
+        template<typename T>
+        struct default_deleter {
+            static void destroy(T* del){
+                delete del;
+            }
+        };
+        template<typename T>
+        struct default_deleter_arr {
+            static void destroy(T* del){
+                delete [] del;
+            }
+        };
+
         struct opaque {
                 void* _raw = nullptr;
                 type_id _type{type_of<void>()};
                 void (*_deleter)(void*) = nullptr;
                 bool _owner{false};
                 opaque() = default;
-                template<typename T>
+
+                template<typename T,typename deleter = default_deleter<T>>
                 static opaque make(T* ptr,bool _owner = false) {
                     return opaque{
                         ptr,
                         type_of<T>(),
                         [](vptr p) {
-                            delete static_cast<T*>(p);
+                            deleter::destroy(static_cast<T*>(p));
                         },
                         _owner
                    };
