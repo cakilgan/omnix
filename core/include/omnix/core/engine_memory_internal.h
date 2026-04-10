@@ -23,6 +23,9 @@ namespace engine::memory {
     namespace kernel{
         extern ox::freelist_allocator* single;
     }
+    namespace logger {
+        extern ox::freelist_allocator* single;
+    }
 
     template<typename T>
     ox::allocator* get_allocator(type memory_type) {
