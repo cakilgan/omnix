@@ -74,6 +74,7 @@ namespace engine {
                 debug,
                 warning,
                 error,
+                fatal,
                 trace,
                 notice,
                 lifecycle,
@@ -160,6 +161,7 @@ namespace engine {
                 case log_event::level::debug: return "debug";
                 case log_event::level::warning: return "warning";
                 case log_event::level::error: return "error";
+                case log_event::level::fatal: return "fatal";
                 case log_event::level::trace: return "trace";
                 case log_event::level::notice: return "notice";
                 case log_event::level::lifecycle: return "lifecycle";
@@ -252,7 +254,9 @@ namespace engine {
                 case log_event::level::warning:
                     return { ansi::black,        ansi::bg_bright_yellow,  " WARN      ", ansi::bright_yellow  };
                 case log_event::level::error:
-                    return { ansi::bright_white, ansi::bg_bright_red,     " ERROR     ", ansi::bright_red     };
+                    return { ansi::bright_red,  ansi::bg_bright_white,     " ERROR     ", ansi::bright_red     };
+                case log_event::level::fatal:
+                    return { ansi::bright_white,  ansi::bg_bright_red,     " FATAL     ", ansi::bright_red     };
                 case log_event::level::trace:
                     return { ansi::black,        ansi::bg_bright_white,   " TRACE     ", ansi::white          };
                 case log_event::level::notice:
