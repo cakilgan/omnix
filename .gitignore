@@ -8,3 +8,4 @@ cmake-build-release/
 build
 omnix.kdev4
 .vscode
+.gitignore
