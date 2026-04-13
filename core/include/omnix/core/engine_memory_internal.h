@@ -5,14 +5,11 @@
 #ifndef OMNIX_ENGINE_MEMORY_INTERNAL_H
 #define OMNIX_ENGINE_MEMORY_INTERNAL_H
 #include "allocators/freelist_allocator.h"
-#include "omnix/platform/types.h"
-#include "omnix/platform/types.h"
+#include <omnix/platform/types.h>
 
 namespace engine::memory {
     enum type {
         GENERAL,
-        FRAME,
-        RESOURCE,
         KERNEL
     };
     namespace general {
