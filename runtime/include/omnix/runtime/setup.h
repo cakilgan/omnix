@@ -5,7 +5,6 @@
 #ifndef OMNIX_SETUP_H
 #define OMNIX_SETUP_H
 #include <omnix/platform/result.h>
-#include "omnix/kernel/eventbus.h"
 
 namespace engine {
     struct setup_context {

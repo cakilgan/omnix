@@ -160,6 +160,7 @@ namespace ox {
             }
 
             if (auto new_alloc = alloc(new_size)) {
+                memcpy(new_alloc,ptr,old_size.ct);
                 this->free(ptr);
                 return new_alloc;
             }

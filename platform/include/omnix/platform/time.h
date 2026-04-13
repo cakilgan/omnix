@@ -14,13 +14,14 @@ namespace ox {
     OX_RESULT_CATEGORY(time,-54000);
 
     OX_USING( time_t, i64 );
+    OX_USING( timec_t, f32);
 
     struct time{
         struct err {
             OX_RESULT(time,negative_time);
         };
 
-        constexpr time(time_t nanoseconds = 0):ns(nanoseconds){}
+        constexpr time(const time_t nanoseconds = 0):ns(nanoseconds){}
         time_t ns;
         bool operator==( const time& rhs ) const { return ns == rhs.ns; }
         bool operator!=( const time& rhs ) const { return ns != rhs.ns; }
@@ -30,17 +31,17 @@ namespace ox {
         bool operator>=( const time& rhs ) const { return ns >= rhs.ns; }
     };
 
-    OX_FORCE_CONSTEXPR OX_INLINE time    seconds         (time_t s)                        { return {s * 1000000000LL};}
-    OX_FORCE_CONSTEXPR OX_INLINE time_t  seconds         (const time& s)                   { return      s.ns / 1000000000LL;}
+    OX_FORCE_CONSTEXPR OX_INLINE time    seconds         (time_t s)                        { return {static_cast<time_t>(s * 1000000000LL)};}
+    OX_FORCE_CONSTEXPR OX_INLINE timec_t  seconds         (const time& s)                   { return      static_cast<timec_t>(s.ns) / 1000000000.0f;}
 
-    OX_FORCE_CONSTEXPR OX_INLINE time    milliseconds    (const time_t ms)                 { return {ms * 1000000LL};}
-    OX_FORCE_CONSTEXPR OX_INLINE time_t  milliseconds    (const time& ms)                  { return      ms.ns / 1000000LL;}
+    OX_FORCE_CONSTEXPR OX_INLINE time    milliseconds    (const time_t ms)                 { return {static_cast<time_t>(ms * 1000000LL)};}
+    OX_FORCE_CONSTEXPR OX_INLINE timec_t  milliseconds    (const time& ms)                  { return      static_cast<timec_t>(ms.ns) / 1000000.0f;}
 
-    OX_FORCE_CONSTEXPR OX_INLINE time    microseconds    (const time_t us)                 { return {us * 1000LL};}
-    OX_FORCE_CONSTEXPR OX_INLINE time_t  microseconds    (const time& us)                  { return      us.ns / 1000LL;}
+    OX_FORCE_CONSTEXPR OX_INLINE time    microseconds    (const time_t us)                 { return {static_cast<time_t>(us * 1000LL)};}
+    OX_FORCE_CONSTEXPR OX_INLINE timec_t  microseconds    (const time& us)                  { return      static_cast<timec_t>(us.ns) / 1000.0f;}
 
     OX_FORCE_CONSTEXPR OX_INLINE time    nanoseconds     (const time_t ns)                 { return {ns};}
-    OX_FORCE_CONSTEXPR OX_INLINE time_t  nanoseconds     (const time& ns)                  { return  ns.ns;}
+    OX_FORCE_CONSTEXPR OX_INLINE timec_t  nanoseconds     (const time& ns)                  { return  static_cast<timec_t>(ns.ns);}
 
     OX_FORCE_CONSTEXPR OX_INLINE time    operator-       (const time& a,const time& b)     { return {a.ns - b.ns};   }
     OX_FORCE_CONSTEXPR OX_INLINE time    operator+       (const time& a,const time& b)     { return {a.ns + b.ns};   }

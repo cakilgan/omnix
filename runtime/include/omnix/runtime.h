@@ -8,20 +8,6 @@
 
 namespace engine {
     namespace runtime {
-        extern enum class states {
-            not_started,
-            init,
-            run,
-            shutdown,
-            stop
-        }state;
-
-        ox::result_t boot(const config& config, const args& args);
-
-        ox::result_t pump(ox::time dt);
-
-        ox::result_t shutdown_context();
-
     }
 }
 

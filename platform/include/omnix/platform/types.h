@@ -40,7 +40,7 @@ namespace ox {
         OX_USING( i64,signed long int    );
 #else
         OX_USING( u64,unsigned long long );
-        OX_USING( i64,signed long int    );
+        OX_USING( i64,signed long long    );
 #endif
 
         OX_USING(uptr,u64);

@@ -4,7 +4,14 @@
 
 #ifndef OMNIX_KERNEL_H
 #define OMNIX_KERNEL_H
-#include <omnix/kernel/s_context.h>
-#include <omnix/kernel/eventbus.h>
-
+namespace engine {
+    namespace kernel {
+        enum class behavior {
+            once,
+            loop,
+            reactive,
+            times
+        };
+    }
+}
 #endif //OMNIX_KERNEL_H

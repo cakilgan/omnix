@@ -272,8 +272,8 @@ namespace engine {
         inline void process(const log_event& ev) {
             const auto style = get_level_style(ev.level);
 
-            auto dt = ox::date(ev.timestamp);
-            printf("[%i.%i.%i..%3ius] ",
+            const auto dt = ox::date(ev.timestamp);
+            printf("[%2i.%2i.%2i..%3ius] ",
                 dt.value.hour,
                 dt.value.minute,
                 dt.detail.second,
@@ -309,7 +309,7 @@ namespace engine {
 
                 switch (f.type) {
                     case FT_INT:
-                        printf("%s%lld%s", ansi::cyan,    (long long)f.i, ansi::reset);
+                        printf("%s%lld%s", ansi::cyan,    static_cast<long long>(f.i), ansi::reset);
                         break;
                     case FT_FLOAT:
                         printf("%s%f%s",   ansi::yellow,  f.f,            ansi::reset);
