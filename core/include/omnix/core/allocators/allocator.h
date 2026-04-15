@@ -4,23 +4,24 @@
 
 #ifndef OMNIX_ALLOCATOR_H
 #define OMNIX_ALLOCATOR_H
-#include <omnix/platform/types.h>
 #include <omnix/platform/byte.h>
-#include <omnix/platform/result.h>
 #include <omnix/platform/memory.h>
+#include <omnix/platform/result.h>
+#include <omnix/platform/types.h>
 #include <omnix/platform/util.h>
 namespace ox {
-    struct allocator {
-    protected:
-        memory  _mem;
-    public:
-        explicit allocator(memory mem):_mem(ox::move(mem)){}
-        explicit allocator() = default;
-        virtual ~allocator() = default;
-        virtual vptr alloc(bytes size) = 0;
-        virtual result_t  free(vptr ptr) = 0;
-        virtual vptr grow(vptr ptr, bytes old_size, bytes new_size) = 0;
-        virtual result<bytes> size(vptr ptr) const = 0;
-    };
-}
-#endif //OMNIX_ALLOCATOR_H
+struct allocator {
+  protected:
+    memory _mem;
+
+  public:
+    explicit allocator(memory mem) : _mem(ox::move(mem)) {}
+    explicit allocator() = default;
+    virtual ~allocator() = default;
+    virtual vptr alloc(bytes size) = 0;
+    virtual result_t free(vptr ptr) = 0;
+    virtual vptr grow(vptr ptr, bytes old_size, bytes new_size) = 0;
+    virtual result<bytes> size(vptr ptr) const = 0;
+};
+} // namespace ox
+#endif // OMNIX_ALLOCATOR_H

@@ -5,7 +5,6 @@
 #ifndef OMNIX_VFS_H
 #define OMNIX_VFS_H
 
-namespace ox {
-}
+namespace ox {}
 
-#endif //OMNIX_VFS_H
+#endif // OMNIX_VFS_H

@@ -7,8 +7,7 @@
 #include <omnix/platform/result.h>
 
 namespace engine {
-    struct setup_context {
-    };
-    ox::result_t setup(setup_context* ctx);
-}
-#endif //OMNIX_SETUP_H
+struct setup_context {};
+ox::result_t setup(setup_context *ctx);
+} // namespace engine
+#endif // OMNIX_SETUP_H

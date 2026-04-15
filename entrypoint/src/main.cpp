@@ -1,8 +1,15 @@
 #include <omnix/omnix.h>
+#define OXL_BYTE
+#define OXL_TIME
+#include <omnix/platform/literals.h>
 #include <thread>
-#define MEMORY_RESULT(x,name)\
-if(!x){OX_CRASH(#x);}\
-name = ::ox::move(x.value()); dbg("%s = ok",#x)\
+
+#define MEMORY_RESULT(x, name)                                                 \
+    if (!x) {                                                                  \
+        OX_CRASH(#x);                                                          \
+    }                                                                          \
+    name = ::ox::move(x.value());                                              \
+    dbg("%s = ok", #x)
 
 ox::memory ENDLESS_MEMORY;
 ox::memory GENERAL;
@@ -17,9 +24,13 @@ engine::logger::log_queue<> *engine::logger::queue = nullptr;
 std::thread LOG_WORKER;
 
 ox::result_t essential_init_1() {
+
+    // ignore:
+    printf("\n");
+
     engine::logger::queue = &LOG_QUEUE;
 
-    auto LOG_WORKER_ = std::thread(  []{
+    auto LOG_WORKER_ = std::thread([] {
         engine::logger::log_event ev{};
         while (LOG_QUEUE.pop(ev)) {
             process(ev);
@@ -30,12 +41,11 @@ ox::result_t essential_init_1() {
     lifecycle("Hello World!");
     lifecycle("starting OmniX engine...");
 
-
     dbg("installing crash handler");
     // inf: installing crash handler functions.
     ox::install_crash_handler();
 
-    //warn: temp memory slices
+    // warn: temp memory slices
     ox::memory GENERAL_SMALL;
     ox::memory GENERAL_MID;
     ox::memory GENERAL_BIG;
@@ -44,34 +54,27 @@ ox::result_t essential_init_1() {
     // warn: end temp memory slices
 
     // inf: it is technically finite, but you don't have 1000 gb ram, do you?
-    auto _endless_memory_result =
-        ox::memory::allocate(ox::gigabytes(1000));
-    MEMORY_RESULT(_endless_memory_result,ENDLESS_MEMORY);
+    auto _endless_memory_result = ox::memory::allocate(1000_gb);
+    MEMORY_RESULT(_endless_memory_result, ENDLESS_MEMORY);
 
     auto _general_memory_result =
-        ox::memory::slice(ENDLESS_MEMORY,
-            ox::loczero,ox::gigabytes(100));
+        ox::memory::slice(ENDLESS_MEMORY, ox::loczero, 100_gb);
     MEMORY_RESULT(_general_memory_result, GENERAL);
 
     auto _general_small_memory_result =
-    ox::memory::slice(GENERAL,
-        ox::loczero,ox::gigabytes(20));
+        ox::memory::slice(GENERAL, ox::loczero, 20_gb);
     MEMORY_RESULT(_general_small_memory_result, GENERAL_SMALL);
 
     auto _general_mid_memory_result =
-    ox::memory::slice(GENERAL,
-        ox::loczero + ox::gigabytes(20),ox::gigabytes(40));
+        ox::memory::slice(GENERAL, ox::loczero + 20_gb, 40_gb);
     MEMORY_RESULT(_general_mid_memory_result, GENERAL_MID);
 
     auto _general_big_memory_result =
-        ox::memory::slice(GENERAL,
-            ox::loczero + ox::gigabytes(60),ox::gigabytes(40));
+        ox::memory::slice(GENERAL, ox::loczero + 60_gb, 40_gb);
     MEMORY_RESULT(_general_big_memory_result, GENERAL_BIG);
 
     auto _kernel_memory_result =
-        ox::memory::slice(ENDLESS_MEMORY,
-            ox::loczero + ox::gigabytes(100)
-            ,ox::gigabytes(10));
+        ox::memory::slice(ENDLESS_MEMORY, ox::loczero + 100_gb, 10_gb);
     MEMORY_RESULT(_kernel_memory_result, KERNEL_MEMORY);
 
     static ox::freelist_allocator general_small_alloc{ox::move(GENERAL_SMALL)};
@@ -97,16 +100,17 @@ ox::result_t essential_shutdown_1() {
         std::this_thread::yield();
     }
     LOG_QUEUE.stop();
-    if (LOG_WORKER.joinable()) LOG_WORKER.join();
+    if (LOG_WORKER.joinable())
+        LOG_WORKER.join();
     return ox::ok;
 }
 
-int main(int argc, char** argv) {
-    OX_CHECK(essential_init_1()==ox::ok);
+int main(int argc, char **argv) {
+    OX_CHECK(essential_init_1() == ox::ok);
 
     static engine::config CONFIG;
     static engine::args ARGS{argv, argc};
 
-    OX_CHECK(essential_shutdown_1()==ox::ok);
+    OX_CHECK(essential_shutdown_1() == ox::ok);
     return EXIT_SUCCESS;
 }
