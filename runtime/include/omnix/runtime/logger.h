@@ -271,8 +271,8 @@ inline void process(const log_event &ev) {
     const auto style = get_level_style(ev.level);
 
     const auto dt = ox::date(ev.timestamp);
-    printf("[%2i.%2i.%2i..%3ius] ", dt.value.hour, dt.value.minute,
-           dt.detail.second, dt.detail.microsecond);
+    printf("[%2i.%2i.%2i..%3ims] ", dt.value.hour, dt.value.minute,
+           dt.detail.second, dt.detail.millisecond);
 
     printf("%s%s%s%s ", ansi::bold, style.badge_bg, style.badge_fg,
            style.label);
