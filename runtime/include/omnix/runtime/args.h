@@ -1,10 +1,9 @@
 #ifndef OMNIX_ARGS_H
 #define OMNIX_ARGS_H
 #include <iostream>
-#include <omnix/core/engine_memory_internal.h>
 #include <omnix/core/strview.h>
 #include <omnix/core/vector.h>
-namespace engine {
+namespace ox {
 struct args {
   private:
     char **_raw;

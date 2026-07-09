@@ -1,7 +1,7 @@
 #ifndef OMNIX_CONFIG_H
 #define OMNIX_CONFIG_H
 
-namespace engine {
+namespace ox {
 struct config {};
 } // namespace engine
 

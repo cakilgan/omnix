@@ -1,7 +1,7 @@
 #ifndef OMNIX_LOG_H
 #define OMNIX_LOG_H
 
-#define log(l,...) engine::logger::write<engine::logger::log_event::level::l>(__VA_ARGS__)
+#define log(l,...) ox::logger::write<ox::logger::log_event::level::l>(__VA_ARGS__)
 #define inf(...) log(info,__VA_ARGS__)
 #define warn(...) log(warning,__VA_ARGS__)
 #define error(...) log(error,__VA_ARGS__)
@@ -19,7 +19,7 @@
 #endif
 
 #define KEY(str)\
-        ::engine::logger::log_field_key{\
+        ::ox::logger::log_field_key{\
             ox::hash<ox::cstr>{}(str),str\
         }\
 

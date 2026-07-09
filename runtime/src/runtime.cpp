@@ -2,15 +2,13 @@
 #include <omnix/platform/crash.h>
 #include <omnix/runtime.h>
 #include <omnix/runtime/logger.h>
-#include <omnix/runtime/setup.h>
-
 #include <omnix/core/log.h>
 
 #if OX_IS(PLATFORM, LINUX)
 #include <omnix/platform/assert.h>
 
 using namespace ox;
-using engine::literals::operator""_k;
+using ox::literals::operator""_k;
 
 void logger_assert_handler(cstr expr, cstr file, i32 line, cstr msg) {
     fatal("ASSERTION FAILED :", "Expr"_k = expr, "File"_k = file,

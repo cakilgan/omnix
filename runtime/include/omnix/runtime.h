@@ -6,7 +6,7 @@
 #include "runtime/config.h"
 #include "runtime/logger.h"
 
-namespace engine {
+namespace ox {
     namespace runtime {
     }
 }

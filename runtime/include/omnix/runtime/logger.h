@@ -12,7 +12,7 @@
 #include <condition_variable>
 #include <mutex>
 
-namespace engine {
+namespace ox {
 namespace logger {
 
 template <typename T> struct log_kv;
@@ -270,7 +270,7 @@ inline level_style get_level_style(enum log_event::level lvl) {
 inline void process(const log_event &ev) {
     const auto style = get_level_style(ev.level);
 
-    const auto dt = ox::date(ev.timestamp);
+    const auto dt = ox::date(ev.timestamp + ox::seconds(60)*60*3);
     printf("[%2i.%2i.%2i..%3ims] ", dt.value.hour, dt.value.minute,
            dt.detail.second, dt.detail.millisecond);
 
@@ -351,7 +351,7 @@ void write(const char *msg_or_fmt, Args &&...args) {
 } // namespace logger
 
 namespace literals {
-constexpr engine::logger::log_field_key operator""_k(const char *str, size_t) {
+constexpr ox::logger::log_field_key operator""_k(const char *str, size_t) {
     return {ox::hash<ox::cstr>{}(str), str};
 }
 } // namespace literals
