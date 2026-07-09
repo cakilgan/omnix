@@ -3,4 +3,4 @@ add_library(oxlayer_runtime
 )
 
 target_include_directories(oxlayer_runtime PUBLIC include)
-target_link_libraries(oxlayer_runtime PRIVATE oxlayer_platform oxlayer_core oxlayer_kernel)
+target_link_libraries(oxlayer_runtime PRIVATE omnix_platform oxlayer_core oxlayer_kernel)

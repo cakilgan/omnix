@@ -62,7 +62,7 @@ add_subdirectory(runtime)
 # ------------------------------
 add_library(omnix_engine ${OX_SOURCES})
 target_include_directories(omnix_engine PUBLIC "include")
-target_link_libraries(omnix_engine PRIVATE oxlayer_platform oxlayer_core oxlayer_kernel oxlayer_runtime)
+target_link_libraries(omnix_engine PRIVATE omnix_platform oxlayer_core oxlayer_kernel oxlayer_runtime)
 
 # ------------------------------
 # Executable

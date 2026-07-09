@@ -11,4 +11,4 @@ elseif(WIN32)
 endif()
 
 target_include_directories(oxlayer_kernel PUBLIC include)
-target_link_libraries(oxlayer_kernel PRIVATE oxlayer_platform oxlayer_core)
+target_link_libraries(oxlayer_kernel PRIVATE omnix_platform oxlayer_core)
