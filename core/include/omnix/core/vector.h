@@ -11,7 +11,6 @@
 #include <omnix/platform/util.h>
 
 #include "allocators/allocator.h"
-#include "engine_memory_internal.h"
 
 #include <initializer_list>
 
@@ -59,18 +58,6 @@ template <typename T, typename Allocator = allocator> struct vector {
         : _allocator(allocator), _capacity(reserve) {
         _data = static_cast<T *>(_allocator->alloc(_u_convert(_capacity)));
         OX_ASSERT(_data != nullptr);
-    }
-    explicit vector(engine::memory::type memory_type = engine::memory::GENERAL,
-                    usize reserve = 4)
-        : vector(ox::safe(engine::memory::get_allocator<T>(memory_type)),
-                 reserve) {}
-    explicit vector(std::initializer_list<T> list,
-                    engine::memory::type memory_type = engine::memory::GENERAL,
-                    usize reserve = 4)
-        : vector(memory_type, reserve) {
-        for (const auto &elem : list) {
-            new (_data + _size++) T(elem);
-        }
     }
 
     vector(const vector &) = delete;

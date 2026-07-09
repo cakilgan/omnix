@@ -16,5 +16,8 @@ using ox::literals::operator""_ms;
 using ox::literals::operator""_us;
 using ox::literals::operator""_ns;
 #endif
+#ifdef OXL_LOGGER
+using ox::literals::operator ""_k;
+#endif
 
 #endif // OMNIX_LITERALS_H

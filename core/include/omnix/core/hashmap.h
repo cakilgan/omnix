@@ -7,7 +7,6 @@
 
 // warn: std
 #include "allocators/allocator.h"
-#include "engine_memory_internal.h"
 #include "hash.h"
 #include <type_traits>
 
@@ -118,10 +117,6 @@ struct hashmap {
         for (usize i = 0; i < _bucket_count; ++i)
             new (&_buckets[i]) bucket{};
     }
-    explicit hashmap(engine::memory::type memory_type = engine::memory::GENERAL,
-                     usize reserve = 4)
-        : hashmap(ox::safe(engine::memory::get_allocator<T>(memory_type)),
-                  reserve) {}
 
     hashmap(const hashmap &) = delete;
     hashmap &operator=(const hashmap &) = delete;

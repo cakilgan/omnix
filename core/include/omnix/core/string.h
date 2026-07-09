@@ -4,7 +4,6 @@
 
 #include "allocators/allocator.h"
 #include <omnix/core/strview.h>
-#include <omnix/core/engine_memory_internal.h>
 #include <cstdarg>
 #include <cstdio>
 
@@ -60,13 +59,13 @@ namespace ox {
             OX_ASSERT(_raw);
             _raw[0] = T(0);
         }
-        string_base(const T* from, usize len, Allocator* allocator = engine::memory::general::small)
+        string_base(const T* from, usize len, Allocator* allocator)
             : string_base(allocator, len) {
             set(from, len);
         }
-        explicit string_base(const T* from = "", Allocator* allocator = engine::memory::general::small)
+        explicit string_base(const T* from, Allocator* allocator)
             : string_base(from, ox::strlen(from), allocator) {}
-        explicit string_base(usize reserve, Allocator* allocator = engine::memory::general::small)
+        explicit string_base(usize reserve, Allocator* allocator)
             : string_base(allocator, reserve) {}
 
         string_base(string_base&& o) noexcept
@@ -493,19 +492,19 @@ namespace ox {
 
     // Non-mutating copies of case/trim — allocate via provided allocator.
     template<typename T, typename A>
-    string_base<T,A> to_upper(string_view<T> sv, A* allocator = engine::memory::general::small) {
+    string_base<T,A> to_upper(string_view<T> sv, A* allocator) {
         string_base<T,A> r(sv.data, sv.len, allocator);
         r.to_upper_inplace();
         return r;
     }
     template<typename T, typename A>
-    string_base<T,A> to_lower(string_view<T> sv, A* allocator = engine::memory::general::small) {
+    string_base<T,A> to_lower(string_view<T> sv, A* allocator) {
         string_base<T,A> r(sv.data, sv.len, allocator);
         r.to_lower_inplace();
         return r;
     }
     template<typename T, typename A>
-    string_base<T,A> trimmed(string_view<T> sv, A* allocator = engine::memory::general::small) {
+    string_base<T,A> trimmed(string_view<T> sv, A* allocator) {
         string_base<T,A> r(sv.data, sv.len, allocator);
         r.trim_inplace();
         return r;
@@ -514,22 +513,13 @@ namespace ox {
     // Concatenate two views into a new string.
     template<typename T, typename A = allocator>
     string_base<T,A> concat(string_view<T> a, string_view<T> b,
-                             A* allocator = engine::memory::general::small) {
+                             A* allocator) {
         string_base<T,A> r(allocator, a.len + b.len);
         r.append(a);
         r.append(b);
         return r;
     }
 
-    // sprintf into a fresh string.
-    inline str str_format(const char* fmt, ...) {
-        va_list args;
-        va_start(args, fmt);
-        str r(64u); // başlangıç tamponu — büyük çoğunluk için tek alloc yeterli
-        r.format_v(fmt, args);
-        va_end(args);
-        return r;
-    }
 
 } // namespace ox
 #endif // OMNIX_STRING_H
